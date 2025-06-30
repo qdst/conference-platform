@@ -1,6 +1,6 @@
-package com.conference.platform.room.dto;
+package com.conference.platform.control.dto.httpclient;
 
-import com.conference.platform.room.model.RoomStatus;
+import com.conference.platform.control.model.RoomStatus;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +15,5 @@ public class RoomResponseDto {
     private String roomCode;
     private String name;
     private Integer capacity;
-    private LocationDto locationDto;
     private RoomStatus roomStatus;
   }

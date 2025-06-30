@@ -20,7 +20,7 @@ public class Location {
   @Id
   @SequenceGenerator(
       name = "location_seq",
-      sequenceName = "location_t_id_seq",
+      sequenceName = "c_room.location_t_id_seq",
       allocationSize = 1
   )
   @GeneratedValue(

@@ -10,26 +10,30 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
 @Getter
 @Setter
+@Entity
+@Table(name = "room", schema = "c_room")
 @NoArgsConstructor
 public class Room {
 
   @Id
   @SequenceGenerator(
       name = "room_seq",
-      sequenceName = "room_t_id_seq",
+      sequenceName = "c_room.room_t_id_seq",
       allocationSize = 1
   )
   @GeneratedValue(
       strategy = GenerationType.SEQUENCE,
       generator = "room_seq"
   )
+  @Setter(AccessLevel.NONE)
   private Long id;
   private String roomCode;
   private String name;

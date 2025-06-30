@@ -6,6 +6,7 @@ import com.conference.platform.room.dto.UpdateRoomRequestDto;
 import com.conference.platform.room.mapper.RoomMapper;
 import com.conference.platform.room.repository.RoomRepository;
 import de.huxhorn.sulky.ulid.ULID;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,7 @@ public class RoomServiceImpl implements RoomService {
 
   @Override
   public RoomResponseDto updateRoom(UpdateRoomRequestDto updateRoomRequestDto, String roomCode) {
-    var roomForUpdate = roomRepository.findByRoomCode(roomCode);
+    var roomForUpdate = roomRepository.findByRoomCode(roomCode).orElseThrow();
     RoomMapper.updateRoom(roomForUpdate, updateRoomRequestDto);
     var updatedRoom = roomRepository.save(roomForUpdate);
     return RoomMapper.toResponseDto(updatedRoom);
@@ -34,7 +35,14 @@ public class RoomServiceImpl implements RoomService {
 
   @Override
   public RoomResponseDto findByRoomCode(String roomCode) {
-    var foundRoom = roomRepository.findByRoomCode(roomCode);
-    return RoomMapper.toResponseDto(foundRoom);
+    return roomRepository.findByRoomCode(roomCode)
+        .map(RoomMapper::toResponseDto).orElseThrow();
+  }
+
+  @Override
+  public List<RoomResponseDto> findAll() {
+    return roomRepository.findAll().stream()
+        .map(RoomMapper::toResponseDto)
+        .toList();
   }
 }

@@ -12,16 +12,22 @@
       <column name="id" type="BIGINT" defaultValueSequenceNext="conference_t_id_seq">
         <constraints primaryKey="true" nullable="false"/>
       </column>
-      <column name="conference_code" type="CHAR(26)">
+      <column name="code" type="CHAR(26)">
+        <constraints nullable="false" unique="true"/>
+      </column>
+      <column name="total_capacity" type="INT4">
         <constraints nullable="false"/>
       </column>
       <column name="title" type="VARCHAR(255)">
         <constraints nullable="false"/>
       </column>
-      <column name="scheduled_date_time" type="TIMESTAMP">
+      <column name="start_time" type="TIMESTAMP">
         <constraints nullable="false"/>
       </column>
-      <column name="conference_room" type="CHAR(26)">
+      <column name="end_time" type="TIMESTAMP">
+        <constraints nullable="false"/>
+      </column>
+      <column name="room_code" type="CHAR(26)">
         <constraints nullable="false"/>
       </column>
       <column name="status" type="VARCHAR(32)">
@@ -40,8 +46,8 @@
       <column name="conference_id" type="BIGINT">
         <constraints nullable="false"/>
       </column>
-      <column name="registration_code" type="VARCHAR(32)">
-        <constraints nullable="false"/>
+      <column name="registration_code" type="CHAR(32)">
+        <constraints nullable="false" unique="true"/>
       </column>
       <column name="first_name" type="VARCHAR(128)">
         <constraints nullable="false"/>
@@ -50,6 +56,9 @@
         <constraints nullable="false"/>
       </column>
       <column name="gender" type="VARCHAR(8)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="status" type="VARCHAR(8)">
         <constraints nullable="false"/>
       </column>
       <column name="email" type="VARCHAR(128)">
@@ -67,7 +76,6 @@
       referencedTableName="conference"
       referencedColumnNames="id"/>
   </changeSet>
-
 
 </databaseChangeLog>
 

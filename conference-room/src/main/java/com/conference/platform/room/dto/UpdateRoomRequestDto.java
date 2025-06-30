@@ -16,4 +16,3 @@ public class UpdateRoomRequestDto {
     private RoomStatus roomStatus;
     private Integer capacity;
   }
-

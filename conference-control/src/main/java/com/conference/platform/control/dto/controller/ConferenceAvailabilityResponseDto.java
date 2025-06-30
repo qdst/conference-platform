@@ -1,4 +1,4 @@
-package com.conference.platform.control.dto;
+package com.conference.platform.control.dto.controller;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ConferenceAvailabilityResponseDto {
-  private int remainingCapacity;
+  private Boolean isConferenceAvailable;
+  private Integer remainingCapacity;
 }

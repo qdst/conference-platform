@@ -1,4 +1,4 @@
-package com.conference.platform.control.dto;
+package com.conference.platform.control.dto.controller;
 
 import com.conference.platform.control.model.ConferenceStatus;
 import java.time.LocalDateTime;
@@ -12,9 +12,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ConferenceRequestDto {
+public class ConferenceResponseDto {
+  private String code;
   private String title;
-  private LocalDateTime scheduledDateTime;
-  private String conferenceRoom;
+  private LocalDateTime startTime;
+  private LocalDateTime endTime;
+  private String roomCode;
+  private Integer totalCapacity;
   private ConferenceStatus status;
 }

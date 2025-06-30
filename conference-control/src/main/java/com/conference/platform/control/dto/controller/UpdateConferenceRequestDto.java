@@ -1,10 +1,8 @@
-package com.conference.platform.room.dto;
+package com.conference.platform.control.dto.controller;
 
-import com.conference.platform.room.model.RoomStatus;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,15 +13,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class CreateRoomRequestDto {
+public class UpdateConferenceRequestDto {
+
+  @NotNull
+  private LocalDateTime startTime;
+
+  @NotNull
+  private LocalDateTime endTime;
 
   @NotBlank
-  private String name;
-  @NotNull
-  private LocationDto locationDto;
-  @NotNull
-  private RoomStatus roomStatus;
-  @NotNull
-  @Min(1)
-  private Integer capacity;
+  private String roomCode;
 }
