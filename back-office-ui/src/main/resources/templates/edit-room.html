@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Edit Room</title>
+</head>
+<body>
+<h1>Room Details</h1>
+<form th:action="@{/rooms/{code}(code=${room.roomCode})}" th:object="${room}" method="post">
+  <fieldset th:style="'width: 50ch;'">
+    <fieldset>
+      <label>Room Code:</label><br/>
+      <input type="text" th:field="*{roomCode}" disabled th:style="'width: 40ch;'"/>
+      <br/>
+
+      <label>Name:</label><br/>
+      <input type="text" th:field="*{name}" required th:style="'width: 40ch;'"/>
+      <br/>
+
+      <label>Status:</label><br/>
+      <select th:field="*{roomStatus}" th:style="'width: 40ch;'">
+        <option th:each="status : ${T(com.conference.platform.backoffice.ui.view.RoomStatus).values()}"
+                th:value="${status}" th:text="${status}" />
+      </select>
+      <br/>
+
+      <label>Capacity:</label><br/>
+      <input type="number" th:field="*{capacity}" min="1" required th:style="'width: 40ch;'"/>
+      <br/>
+    </fieldset>
+    <br/>
+
+    <fieldset>
+      <legend>Location</legend>
+      <label>Address Line 1:</label><br/>
+      <input type="text" th:field="*{addressLine1}" disabled th:style="'width: 40ch;'"/>
+      <br/>
+      <label>Address Line 2:</label><br/>
+      <input type="text" th:field="*{addressLine2}" disabled th:style="'width: 40ch;'"/>
+      <br/>
+      <label>City:</label><br/>
+      <input type="text" th:field="*{city}" disabled th:style="'width: 40ch;'"/>
+      <br/>
+    </fieldset>
+  </fieldset>
+  <br/>
+
+  <button type="submit">Save Changes</button>
+</form>
+</body>
+</html>

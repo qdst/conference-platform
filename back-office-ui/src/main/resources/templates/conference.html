@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Create Room</title>
+</head>
+<body>
+<h1>Create a New Room</h1>
+<form th:action="@{/rooms}" th:object="${room}" method="post">
+  <fieldset th:style="'width: 50ch;'">
+    <fieldset>
+      <label>Name:</label><br/>
+      <input type="text" th:field="*{name}" required th:style="'width: 40ch;'"/>
+      <br/>
+
+      <label>Status:</label></br>
+      <select th:field="*{roomStatus}" th:style="'width: 40ch;'">
+        <option th:each="status : ${T(com.conference.platform.backoffice.ui.view.RoomStatus).values()}"
+                th:value="${status}" th:text="${status}"/>
+      </select>
+      <br/>
+
+      <label>Capacity:</label><br/>
+      <input type="number" th:field="*{capacity}" min="1" required th:style="'width: 40ch;'"/>
+      <br/>
+    </fieldset>
+    <br/>
+
+
+    <fieldset>
+      <legend>Location</legend>
+      <label>Address Line 1:</label><br/>
+        <input type="text" th:field="*{addressLine1}" required th:style="'width: 40ch;'"/>
+      <br/>
+      <label>Address Line 2:</label><br/>
+        <input type="text" th:field="*{addressLine2}" required th:style="'width: 40ch;'"/>
+      <br/>
+      <label>City:</label><br/>
+        <input type="text" th:field="*{city}" required th:style="'width: 40ch;'"/>
+      <br/>
+    </fieldset>
+  </fieldset>
+  <br/>
+
+  <button type="submit">Submit</button>
+</form>
+
+<!-- Display the result if present -->
+<div th:if="${createdRoom}">
+  <h2>Room Created</h2>
+  <p>Name: <span th:text="${createdRoom.name}"></span></p>
+  <p>Address: <span th:text="${createdRoom.addressLine1}"></span>,
+    <span th:text="${createdRoom.addressLine2}"></span>,
+    <span th:text="${createdRoom.city}"></span></p>
+  <p>Status: <span th:text="${createdRoom.roomStatus}"></span></p>
+  <p>Capacity: <span th:text="${createdRoom.capacity}"></span></p>
+</div>
+</body>
+</html>
