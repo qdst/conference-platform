@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+  http://www.liquibase.org/xml/ns/dbchangelog
+  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+  <changeSet id="create_feedback_table" author="igor">
+    <createSequence sequenceName="feedback_t_id_seq" startValue="100" incrementBy="1"/>
+    <createTable tableName="feedback">
+      <column name="id" type="BIGINT" defaultValueSequenceNext="feedback_t_id_seq">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="author" type="VARCHAR(142)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="conference_code" type="CHAR(26)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="title" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="text" type="VARCHAR(4000)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="created_at" type="TIMESTAMP">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createIndex indexName="index_feedback_t_conference_code" tableName="feedback">
+      <column name="conference_code"/>
+    </createIndex>
+
+  </changeSet>
+
+</databaseChangeLog>
+
