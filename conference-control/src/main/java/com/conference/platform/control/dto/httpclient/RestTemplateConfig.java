@@ -1,4 +1,4 @@
-package com.conference.platform.control.config;
+package com.conference.platform.control.dto.httpclient;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;

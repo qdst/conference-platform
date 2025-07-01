@@ -2,6 +2,7 @@ package com.conference.platform.control.service;
 
 import com.conference.platform.control.dto.controller.ParticipantRegistrationRequestDto;
 import com.conference.platform.control.dto.controller.ParticipantRegistrationResponseDto;
+import com.conference.platform.control.dto.controller.ParticipantResponseDto;
 import com.conference.platform.control.mapper.ParticipantMapper;
 import com.conference.platform.control.model.ConferenceStatus;
 import com.conference.platform.control.model.ParticipantStatus;
@@ -59,13 +60,23 @@ public class ParticipantServiceImpl implements ParticipantService {
   }
 
   @Override
-  public void cancelRegistration(String participantCode) {
-    var participant = participantRepository.getByParticipantCode(participantCode);
+  public void cancelRegistration(String registrationCode) {
+    var participant = participantRepository.getByParticipantCode(registrationCode);
     if (participant.getStatus() != ParticipantStatus.REGISTERED) {
       throw null;
     }
     participant.setStatus(ParticipantStatus.CANCELLED);
     participantRepository.save(participant);
+  }
+
+  @Override
+  public ParticipantResponseDto getByParticipantCode(String registrationCode) {
+    var participant = participantRepository.getByParticipantCode(registrationCode);
+    return ParticipantResponseDto.builder()
+        .firstName(participant.getFirstName())
+        .lastName(participant.getLastName())
+        .conferenceCode(participant.getConference().getCode())
+        .build();
   }
 
 }

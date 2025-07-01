@@ -1,11 +1,10 @@
 package com.conference.platform.control.httpclient;
 
 import com.conference.platform.control.dto.httpclient.RoomResponseDto;
-import java.util.Collections;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
 public class RoomHttpClientImpl implements RoomHttpClient {
@@ -15,7 +14,7 @@ public class RoomHttpClientImpl implements RoomHttpClient {
   private final RestTemplate restTemplate;
 
   public RoomHttpClientImpl(
-      @Value("${conference.room.rest.client.paths.findone}") String findOneRoomPath,
+      @Value("${conference.room.rest.client.paths.room.find}") String findOneRoomPath,
       RestTemplate restTemplate) {
     this.restTemplate = restTemplate;
     this.findOneRoomPath = findOneRoomPath;
@@ -23,7 +22,11 @@ public class RoomHttpClientImpl implements RoomHttpClient {
 
   @Override
   public RoomResponseDto findByRoomCode(String roomCode) {
-    return restTemplate.getForObject(findOneRoomPath, RoomResponseDto.class, roomCode);
+    var uri = UriComponentsBuilder
+        .fromUriString(findOneRoomPath)
+        .buildAndExpand(roomCode)
+        .toUri();
+    return restTemplate.getForObject(uri, RoomResponseDto.class);
   }
 
 }

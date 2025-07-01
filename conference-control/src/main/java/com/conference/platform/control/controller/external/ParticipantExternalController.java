@@ -17,8 +17,8 @@ public class ParticipantExternalController {
   private final ParticipantService participantService;
 
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @PatchMapping("/{participantCode}")
-  public void cancelRegistration(@PathVariable String participantCode) {
-    participantService.cancelRegistration(participantCode);
+  @PatchMapping("/{registrationCode}")
+  public void cancelRegistration(@PathVariable String registrationCode) {
+    participantService.cancelRegistration(registrationCode);
   }
 }
