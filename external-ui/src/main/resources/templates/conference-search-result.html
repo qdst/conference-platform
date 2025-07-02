@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Conference Search Results</title>
+</head>
+<body>
+<h1>Search Conferences</h1>
+
+<form th:action="@{/conferences/search/results}" th:object="${criteria}" method="get">
+  <div>
+    <label>Start Time:</label><br/>
+    <input type="datetime-local"
+           th:field="*{startTime}"
+           th:style="'width: 40ch;'"/>
+    <div th:if="${#fields.hasErrors('startTime')}"
+         th:errors="*{startTime}"
+         th:style="'color: red;'"></div>
+  </div>
+  <br/>
+
+  <div>
+    <label>End Time:</label><br/>
+    <input type="datetime-local"
+           th:field="*{endTime}"
+           th:style="'width: 40ch;'"/>
+    <div th:if="${#fields.hasErrors('endTime')}"
+         th:errors="*{endTime}"
+         th:style="'color: red;'"></div>
+  </div>
+  <br/>
+
+  <button type="submit">Search</button>
+</form>
+
+<hr/>
+
+<div th:if="${conferences != null and #lists.isEmpty(conferences)}">
+  <p>No conferences found for the given criteria.</p>
+</div>
+
+<div th:if="${conferences != null and !#lists.isEmpty(conferences)}">
+  <h2>Results</h2>
+  <ul th:style="'list-style: none; padding: 0;'">
+    <li th:each="conf : ${conferences}" th:style="'margin-bottom: 2em;'">
+      <fieldset th:style="'width: 60ch; padding: 1em; border: 1px solid #ccc;'">
+        <legend th:text="${conf.code}">CODE</legend>
+
+        <p>
+          <strong>Title:</strong>
+          <span th:text="${conf.title}">Conference Title</span>
+        </p>
+
+        <p>
+          <strong>Start Time:</strong>
+          <span th:text="${#temporals.format(conf.startTime, 'yyyy-MM-dd HH:mm')}">
+              2025-07-02 09:00
+            </span>
+        </p>
+
+        <p>
+          <strong>End Time:</strong>
+          <span th:text="${#temporals.format(conf.endTime, 'yyyy-MM-dd HH:mm')}">
+              2025-07-02 17:00
+            </span>
+        </p>
+
+        <p>
+          <strong>Total Capacity:</strong>
+          <span th:text="${conf.totalCapacity}">100</span>
+        </p>
+
+        <p>
+          <strong>Registered Participants:</strong>
+          <span th:text="${conf.registeredParticipants}">42</span>
+        </p>
+
+        <p>
+          <strong>Location:</strong>
+          <span th:text="${conf.addressLine1}">123 Main St.</span>,
+          <span th:text="${conf.addressLine2}">Suite 200</span>,
+          <span th:text="${conf.city}">Tallinn</span>
+        </p>
+
+      </fieldset>
+    </li>
+  </ul>
+</div>
+</body>
+</html>
