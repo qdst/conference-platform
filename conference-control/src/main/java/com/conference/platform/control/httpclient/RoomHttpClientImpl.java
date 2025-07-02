@@ -22,11 +22,7 @@ public class RoomHttpClientImpl implements RoomHttpClient {
 
   @Override
   public RoomResponseDto findByRoomCode(String roomCode) {
-    var uri = UriComponentsBuilder
-        .fromUriString(findOneRoomPath)
-        .buildAndExpand(roomCode)
-        .toUri();
-    return restTemplate.getForObject(uri, RoomResponseDto.class);
+    return restTemplate.getForObject(findOneRoomPath, RoomResponseDto.class, roomCode);
   }
 
 }

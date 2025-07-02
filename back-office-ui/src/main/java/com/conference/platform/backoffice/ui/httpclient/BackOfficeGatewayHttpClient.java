@@ -1,14 +1,16 @@
 package com.conference.platform.backoffice.ui.httpclient;
 
-import com.conference.platform.backoffice.ui.httpclient.dto.CreateRoomRequestDto;
-import com.conference.platform.backoffice.ui.httpclient.dto.RoomResponseDto;
-import com.conference.platform.backoffice.ui.httpclient.dto.UpdateRoomRequestDto;
+import com.conference.platform.backoffice.ui.httpclient.dto.ConferenceResponseDto;
+import com.conference.platform.backoffice.ui.httpclient.dto.CreateConferenceRequestDto;
+import com.conference.platform.backoffice.ui.httpclient.dto.UpdateConferenceRequestDto;
 
 public interface BackOfficeGatewayHttpClient {
 
-  RoomResponseDto createRoom(CreateRoomRequestDto requestDto);
+  ConferenceResponseDto createConference(CreateConferenceRequestDto requestDto);
 
-  RoomResponseDto updateRoom(UpdateRoomRequestDto requestDto, String roomCode);
+  ConferenceResponseDto cancelConference(String conferenceCode);
 
-  RoomResponseDto getRoom(String roomCode);
+  ConferenceResponseDto updateConference(UpdateConferenceRequestDto requestDto, String conferenceCode);
+
+  ConferenceResponseDto getConference(String roomCode);
 }

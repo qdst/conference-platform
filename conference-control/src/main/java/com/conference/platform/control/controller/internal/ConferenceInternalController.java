@@ -29,18 +29,22 @@ public class ConferenceInternalController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public ConferenceResponseDto create(@Valid @RequestBody CreateConferenceRequestDto requestDto) {
+  public ConferenceResponseDto createConference(@Valid @RequestBody CreateConferenceRequestDto requestDto) {
     return conferenceService.createConference(requestDto);
   }
 
-  @ResponseStatus(HttpStatus.NO_CONTENT)
-  @PatchMapping("/{conferenceCode}")
-  public void cancel(@PathVariable String conferenceCode) {
-    conferenceService.cancelConference(conferenceCode);
+  @GetMapping("/{conferenceCode}")
+  public ConferenceResponseDto getConference(@PathVariable String conferenceCode) {
+    return conferenceService.getConference(conferenceCode);
+  }
+
+  @PostMapping("/{conferenceCode}")
+  public ConferenceResponseDto cancelConference(@PathVariable String conferenceCode) {
+    return conferenceService.cancelConference(conferenceCode);
   }
 
   @PutMapping("/{conferenceCode}")
-  public ConferenceResponseDto update(
+  public ConferenceResponseDto updateConference(
       @PathVariable String conferenceCode,
       @Valid @RequestBody UpdateConferenceRequestDto requestDto) {
     return conferenceService.updateConference(conferenceCode, requestDto);

@@ -1,8 +1,8 @@
 package com.conference.platform.backoffice.ui.httpclient;
 
-import com.conference.platform.backoffice.ui.httpclient.dto.CreateRoomRequestDto;
-import com.conference.platform.backoffice.ui.httpclient.dto.RoomResponseDto;
-import com.conference.platform.backoffice.ui.httpclient.dto.UpdateRoomRequestDto;
+import com.conference.platform.backoffice.ui.httpclient.dto.ConferenceResponseDto;
+import com.conference.platform.backoffice.ui.httpclient.dto.CreateConferenceRequestDto;
+import com.conference.platform.backoffice.ui.httpclient.dto.UpdateConferenceRequestDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -13,36 +13,43 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class BackOfficeGatewayHttpClientImpl implements BackOfficeGatewayHttpClient {
 
-  private final String existingRoomPath;
-  private final String createRoomPath;
+  private final String oneConferencePath;
+  private final String newConferencePath;
 
   private final RestTemplate restTemplate;
 
   public BackOfficeGatewayHttpClientImpl(
-      @Value("${backoffice.gateway.rest.client.paths.room.find}") String existingRoomPath,
-      @Value("${backoffice.gateway.rest.client.paths.room.new}") String newRoomPath,
+      @Value("${backoffice.gateway.rest.client.paths.conference.one}") String oneConferencePath,
+      @Value("${backoffice.gateway.rest.client.paths.conference.new}") String newConferencePath,
       RestTemplate restTemplate) {
     this.restTemplate = restTemplate;
-    this.existingRoomPath = existingRoomPath;
-    this.createRoomPath = newRoomPath;
+    this.oneConferencePath = oneConferencePath;
+    this.newConferencePath = newConferencePath;
   }
 
   @Override
-  public RoomResponseDto createRoom(CreateRoomRequestDto requestDto) {
-    ResponseEntity<RoomResponseDto> responseEntity =
-        restTemplate.postForEntity(createRoomPath, requestDto, RoomResponseDto.class);
+  public ConferenceResponseDto createConference(CreateConferenceRequestDto requestDto) {
+    ResponseEntity<ConferenceResponseDto> responseEntity =
+        restTemplate.postForEntity(newConferencePath, requestDto, ConferenceResponseDto.class);
     return responseEntity.getBody();
   }
 
   @Override
-  public RoomResponseDto updateRoom(UpdateRoomRequestDto requestDto, String roomCode) {
-    HttpEntity<UpdateRoomRequestDto> requestEntity = new HttpEntity<>(requestDto);
-    return restTemplate.exchange(existingRoomPath, HttpMethod.PUT, requestEntity, RoomResponseDto.class, roomCode).getBody();
+  public ConferenceResponseDto cancelConference(String conferenceCode) {
+    ResponseEntity<ConferenceResponseDto> responseEntity =
+        restTemplate.postForEntity(oneConferencePath, null, ConferenceResponseDto.class, conferenceCode);
+    return responseEntity.getBody();
   }
 
   @Override
-  public RoomResponseDto getRoom(String roomCode) {
-    return restTemplate.getForObject(existingRoomPath, RoomResponseDto.class, roomCode);
+  public ConferenceResponseDto updateConference(UpdateConferenceRequestDto requestDto, String conferenceCode) {
+    HttpEntity<UpdateConferenceRequestDto> requestEntity = new HttpEntity<>(requestDto);
+    return restTemplate.exchange(oneConferencePath, HttpMethod.PUT, requestEntity, ConferenceResponseDto.class, conferenceCode).getBody();
+  }
+
+  @Override
+  public ConferenceResponseDto getConference(String conferenceCode) {
+    return restTemplate.getForObject(oneConferencePath, ConferenceResponseDto.class, conferenceCode);
   }
 
 }

@@ -1,6 +1,6 @@
 package com.conference.platform.control.controller.external;
 
-import com.conference.platform.control.dto.controller.ConferenceResponseDto;
+import com.conference.platform.control.dto.controller.ConferenceSummaryResponseDto;
 import com.conference.platform.control.dto.controller.ParticipantRegistrationRequestDto;
 import com.conference.platform.control.dto.controller.ParticipantRegistrationResponseDto;
 import com.conference.platform.control.service.ConferenceService;
@@ -29,17 +29,16 @@ public class ConferenceExternalController {
   private final ConferenceService conferenceService;
   private final ParticipantService participantService;
 
-  //TODO wrap result into a responseDTO
-  @GetMapping
-  public List<ConferenceResponseDto> findAvailable(
+  @GetMapping("/search")
+  public List<ConferenceSummaryResponseDto> findAvailable(
       @RequestParam
       @NotNull(message = "startTime is required")
-      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+      @DateTimeFormat(pattern = "dd-MM-yyyy'T'HH:mm")
       LocalDateTime startTime,
 
-      @RequestParam("endDate")
-      @NotNull(message = "endDate is required")
-      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+      @RequestParam("endTime")
+      @NotNull(message = "endTime is required")
+      @DateTimeFormat(pattern = "dd-MM-yyyy'T'HH:mm")
       LocalDateTime endTime) {
     return conferenceService.findAvailableConferences(startTime, endTime);
   }

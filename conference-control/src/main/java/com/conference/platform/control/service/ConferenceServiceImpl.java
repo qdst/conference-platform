@@ -1,10 +1,13 @@
 package com.conference.platform.control.service;
 
 import com.conference.platform.control.dto.controller.ConferenceAvailabilityResponseDto;
+import com.conference.platform.control.dto.controller.ConferenceSummaryResponseDto;
 import com.conference.platform.control.dto.controller.CreateConferenceRequestDto;
 import com.conference.platform.control.dto.controller.ConferenceResponseDto;
 import com.conference.platform.control.dto.controller.UpdateConferenceRequestDto;
 import com.conference.platform.control.dto.httpclient.RoomResponseDto;
+import com.conference.platform.control.error.ConferenceException;
+import com.conference.platform.control.error.InvalidConferenceInputException;
 import com.conference.platform.control.mapper.ConferenceMapper;
 import com.conference.platform.control.model.ConferenceStatus;
 import com.conference.platform.control.model.RoomStatus;
@@ -30,6 +33,13 @@ public class ConferenceServiceImpl implements ConferenceService {
   private final DateTimeService dateTimeService;
 
   @Override
+  @Transactional(readOnly = true)
+  public ConferenceResponseDto getConference(String conferenceCode) {
+    var conference = conferenceRepository.getByCode(conferenceCode);
+    return ConferenceMapper.toResponseDto(conference);
+  }
+
+  @Override
   public ConferenceResponseDto createConference(CreateConferenceRequestDto requestDto) {
     var roomCode = requestDto.getRoomCode();
     var startTime = requestDto.getStartTime();
@@ -37,7 +47,7 @@ public class ConferenceServiceImpl implements ConferenceService {
 
     var roomDto = roomService.findByRoomCode(roomCode);
 
-    verifyCorrectStartTimeAndEndTime(startTime, endTime);
+    verifyCorrectInputStartTimeAndEndTime(startTime, endTime);
     verifyRoomAvailability(roomDto, startTime, endTime);
 
     var roomCapacity = roomDto.getCapacity();
@@ -46,12 +56,12 @@ public class ConferenceServiceImpl implements ConferenceService {
     var newConference = ConferenceMapper.toNewModel(requestDto, conferenceCode, roomCapacity);
 
     var createdConference = conferenceRepository.save(newConference);
-    return ConferenceMapper.toDto(createdConference);
+    return ConferenceMapper.toResponseDto(createdConference);
   }
 
-  private static void verifyCorrectStartTimeAndEndTime(LocalDateTime startTime, LocalDateTime endTime) {
+  private static void verifyCorrectInputStartTimeAndEndTime(LocalDateTime startTime, LocalDateTime endTime) {
     if (startTime.isAfter(endTime) || startTime.isEqual(endTime)) {
-      throw null;
+      throw new InvalidConferenceInputException("Conference start time must be after end time.");
     }
   }
 
@@ -64,52 +74,57 @@ public class ConferenceServiceImpl implements ConferenceService {
         conferenceRepository.existsOverlapping(roomDto.getRoomCode(), startTime, endTime, conferenceCode);
 
     if (hasOverlappingConferences) {
-      throw null;
+      throw new ConferenceException("The room has overlapping conferences. Room code: " + roomDto.getRoomCode());
     }
 
     if (roomDto.getRoomStatus() != RoomStatus.AVAILABLE) {
-      throw null;
+      throw new ConferenceException("The room has status other than AVAILABLE. Room status: " + roomDto.getRoomCode());
     }
   }
 
   @Override
-  public void cancelConference(String conferenceCode) {
+  public ConferenceResponseDto cancelConference(String conferenceCode) {
     var conference = conferenceRepository.getByCode(conferenceCode);
 
-    verifyConferenceState(conference);
+    if(conference.getStatus() != ConferenceStatus.SCHEDULED) {
+      throw new ConferenceException(
+          "Conference can be canceled only in the status SCHEDULED. The current conference status: "
+          + conference.getStatus());
+    }
+    verifyConferenceHasCorrectStartAndEndTime(conference.getStartTime(), conference.getEndTime(), "CANCELLED");
 
     conference.setStatus(ConferenceStatus.CANCELLED);
 
     participantRepository.cancelAllRegistrationsForConference(conferenceCode);
-    conferenceRepository.save(conference);
+    var canceledConference = conferenceRepository.save(conference);
+    return ConferenceMapper.toResponseDto(canceledConference);
   }
 
-  private void verifyConferenceState(Conference conference) {
-    if (conference.getStatus() != ConferenceStatus.SCHEDULED) {
-      throw null;
-    }
-
-    var startTime = conference.getStartTime();
-    var endTime = conference.getEndTime();
+  private void verifyConferenceHasCorrectStartAndEndTime(LocalDateTime startTime, LocalDateTime endTime, String action) {
     var currentTime = dateTimeService.getCurrentDateTime();
 
     if (currentTime.isAfter(startTime) && currentTime.isBefore(endTime)) {
-      throw null; // Conference in progress
+      throw new ConferenceException("The conference cannot be '%s' during the progress".formatted(action));
     } else if (currentTime.isAfter(startTime) && currentTime.isAfter(endTime)) {
-      throw null; // Conference is completed
+      throw new ConferenceException("The conference cannot be '%s' when it's completed".formatted(action));
     }
   }
 
   @Override
   public ConferenceResponseDto updateConference(String conferenceCode, UpdateConferenceRequestDto requestDto) {
     var conference = conferenceRepository.getByCode(conferenceCode);
-    verifyConferenceState(conference);
+    if (conference.getStatus() != ConferenceStatus.SCHEDULED) {
+      throw new ConferenceException(
+          "Conference can be updated only in the status SCHEDULED. The current conference status: "
+          + conference.getStatus());
+    }
+    verifyConferenceHasCorrectStartAndEndTime(conference.getStartTime(), conference.getEndTime(), "UPDATED");
 
     var startTimeForUpdate = requestDto.getStartTime();
     var endTimeForUpdate = requestDto.getEndTime();
     var roomCodeForUpdate = requestDto.getRoomCode();
 
-    verifyCorrectStartTimeAndEndTime(startTimeForUpdate, endTimeForUpdate);
+    verifyCorrectInputStartTimeAndEndTime(startTimeForUpdate, endTimeForUpdate);
 
     var roomDto = roomService.findByRoomCode(roomCodeForUpdate);
     verifyRoomAvailability(roomDto, startTimeForUpdate, endTimeForUpdate,  conferenceCode);
@@ -123,12 +138,12 @@ public class ConferenceServiceImpl implements ConferenceService {
     conference.setRoomCode(roomCodeForUpdate);
     var updatedConference = conferenceRepository.save(conference);
 
-    return ConferenceMapper.toDto(updatedConference);
+    return ConferenceMapper.toResponseDto(updatedConference);
   }
 
   private void validateRoomCapacity(int maxCapacity, int activeRegistrations) {
     if(Utils.hasNoCapacity(maxCapacity, activeRegistrations)) {
-      throw null;
+      throw new ConferenceException("Room has no capacity.");
     }
   }
 
@@ -136,7 +151,9 @@ public class ConferenceServiceImpl implements ConferenceService {
   @Transactional(readOnly = true)
   public ConferenceAvailabilityResponseDto checkAvailability(String conferenceCode) {
     var conference = conferenceRepository.getByCode(conferenceCode);
-    verifyConferenceState(conference);
+    if(conference.getStatus() != ConferenceStatus.SCHEDULED) {
+      throw new  ConferenceException("The conference must be in status SCHEDULED. The current conference status: " + conference.getStatus());
+    }
 
     var activeRegistrations = participantRepository.countAllActiveConferenceParticipant(conferenceCode);
     var maxCapacity = conference.getTotalCapacity();
@@ -152,11 +169,17 @@ public class ConferenceServiceImpl implements ConferenceService {
 
   @Override
   @Transactional(readOnly = true)
-  public List<ConferenceResponseDto> findAvailableConferences(LocalDateTime startTime, LocalDateTime endTime) {
-    verifyCorrectStartTimeAndEndTime(startTime, endTime);
-    return conferenceRepository.findAllWithinTimeRange(startTime, endTime).stream()
-        .map(ConferenceMapper::toDto)
+  public List<ConferenceSummaryResponseDto> findAvailableConferences(LocalDateTime startTime, LocalDateTime endTime) {
+    verifyCorrectInputStartTimeAndEndTime(startTime, endTime);
+    return conferenceRepository.findAllWithinTimeRange(startTime, endTime).parallelStream()
+        .filter(conference -> conference.getTotalCapacity() > conference.getActiveParticipantsCount())
+        .map(this::createSummaryResponseDto)
         .toList();
+  }
+
+  private ConferenceSummaryResponseDto createSummaryResponseDto(Conference conference) {
+    var room = roomService.findByRoomCode(conference.getRoomCode());
+    return ConferenceMapper.toSummaryResponseDto(conference, room.getLocationDto());
   }
 
 }

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Edit Conference</title>
+</head>
+<body>
+<h1>Conference Details</h1>
+
+<form th:action="@{/conferences/{code}(code=${conference.code})}"
+      th:object="${conference}"
+      method="post">
+  <fieldset th:style="'width: 50ch;'"
+            th:disabled="${conference.status == T(com.conference.platform.backoffice.ui.view.ConferenceStatus).CANCELLED}">
+
+    <label>Code:</label><br/>
+    <input type="text"
+           th:field="*{code}"
+           th:style="'width: 40ch;'"
+           disabled/>
+    <br/><br/>
+
+    <label>Title:</label><br/>
+    <input type="text"
+           th:field="*{title}"
+           required
+           th:style="'width: 40ch;'"/>
+    <br/><br/>
+
+    <label>Start Time:</label><br/>
+    <input type="datetime-local"
+           th:field="*{startTime}"
+           required
+           th:style="'width: 40ch;'"/>
+    <br/><br/>
+
+    <label>End Time:</label><br/>
+    <input type="datetime-local"
+           th:field="*{endTime}"
+           required
+           th:style="'width: 40ch;'"/>
+    <br/><br/>
+
+    <label>Room Code:</label><br/>
+    <input type="text"
+           th:field="*{roomCode}"
+           required
+           th:style="'width: 40ch;'"/>
+    <br/><br/>
+
+    <label>Total Capacity:</label><br/>
+    <input type="number"
+           th:field="*{totalCapacity}"
+           th:style="'width: 40ch;'"
+           disabled/>
+    <br/><br/>
+
+    <label>Status:</label><br/>
+    <input type="text"
+           th:field="*{status}"
+           th:style="'width: 40ch;'"
+           disabled/>
+    <br/><br/>
+
+    <button type="submit">Save Changes</button>
+  </fieldset>
+</form>
+
+<br/>
+
+<form th:if="${conference.status != T(com.conference.platform.backoffice.ui.view.ConferenceStatus).CANCELLED}"
+      th:action="@{/conferences/{code}/cancel(code=${conference.code})}"
+      method="post">
+  <button type="submit">Cancel Conference</button>
+</form>
+</body>
+</html>

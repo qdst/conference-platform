@@ -1,5 +1,6 @@
 package com.conference.platform.control.repository;
 
+import com.conference.platform.control.error.ConferenceException;
 import com.conference.platform.control.model.entity.Conference;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,7 +14,9 @@ import org.springframework.stereotype.Repository;
 public interface ConferenceRepository extends JpaRepository<Conference, Long> {
 
   default Conference getByCode(String code) {
-    return findByCode(code).orElseThrow(() -> null);
+    return findByCode(code)
+        .orElseThrow(() ->
+            new ConferenceException("Conference with code " + code + " not found"));
   }
 
   Optional<Conference> findByCode(String conferenceCode);

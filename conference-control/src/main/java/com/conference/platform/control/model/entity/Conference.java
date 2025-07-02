@@ -19,6 +19,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+import org.hibernate.annotations.Where;
 
 @Getter
 @Setter
@@ -55,12 +59,17 @@ public class Conference {
   @Enumerated(EnumType.STRING)
   private ConferenceStatus status;
 
+  @Formula("(SELECT COUNT(*) FROM c_control.participant p WHERE p.conference_id = id AND p.status = 'REGISTERED')")
+  private Integer activeParticipantsCount;
+
   @Setter(AccessLevel.NONE)
   @OneToMany(
       mappedBy = "conference",
       cascade = CascadeType.ALL,
       orphanRemoval = true,
       fetch = FetchType.LAZY)
+  @Where(clause = "status = 'REGISTERED'")
+  @LazyCollection(LazyCollectionOption.EXTRA)
   private final List<Participant> participants = new ArrayList<>();
 
   public void addParticipant(Participant participant) {

@@ -1,6 +1,6 @@
 package com.conference.platform.backoffice.ui.service;
 
-import com.conference.platform.backoffice.ui.httpclient.BackOfficeGatewayHttpClient;
+import com.conference.platform.backoffice.ui.httpclient.RoomHttpClient;
 import com.conference.platform.backoffice.ui.httpclient.dto.CreateRoomRequestDto;
 import com.conference.platform.backoffice.ui.httpclient.dto.RoomResponseDto;
 import com.conference.platform.backoffice.ui.httpclient.dto.UpdateRoomRequestDto;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class RoomServiceImpl implements RoomService {
 
-  private final BackOfficeGatewayHttpClient gatewayHttpClient;
+  private final RoomHttpClient gatewayHttpClient;
 
   @Override
   public RoomResponseDto updateRoom(UpdateRoomRequestDto requestDto, String roomCode) {
