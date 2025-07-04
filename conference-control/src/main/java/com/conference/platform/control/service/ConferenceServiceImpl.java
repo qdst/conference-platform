@@ -35,8 +35,16 @@ public class ConferenceServiceImpl implements ConferenceService {
   @Override
   @Transactional(readOnly = true)
   public ConferenceResponseDto getConference(String conferenceCode) {
-    var conference = conferenceRepository.getByCode(conferenceCode);
+    var conference = conferenceRepository.getByConferenceCode(conferenceCode);
     return ConferenceMapper.toResponseDto(conference);
+  }
+
+  @Transactional(readOnly = true)
+  @Override
+  public ConferenceSummaryResponseDto getConferenceSummary(String conferenceCode) {
+    var conference = conferenceRepository.getByConferenceCode(conferenceCode);
+    var room = roomService.findByRoomCode(conference.getRoomCode());
+    return ConferenceMapper.toSummaryResponseDto(conference, room.getLocationDto());
   }
 
   @Override
@@ -84,7 +92,7 @@ public class ConferenceServiceImpl implements ConferenceService {
 
   @Override
   public ConferenceResponseDto cancelConference(String conferenceCode) {
-    var conference = conferenceRepository.getByCode(conferenceCode);
+    var conference = conferenceRepository.getByConferenceCode(conferenceCode);
 
     if(conference.getStatus() != ConferenceStatus.SCHEDULED) {
       throw new ConferenceException(
@@ -112,7 +120,7 @@ public class ConferenceServiceImpl implements ConferenceService {
 
   @Override
   public ConferenceResponseDto updateConference(String conferenceCode, UpdateConferenceRequestDto requestDto) {
-    var conference = conferenceRepository.getByCode(conferenceCode);
+    var conference = conferenceRepository.getByConferenceCode(conferenceCode);
     if (conference.getStatus() != ConferenceStatus.SCHEDULED) {
       throw new ConferenceException(
           "Conference can be updated only in the status SCHEDULED. The current conference status: "
@@ -150,7 +158,7 @@ public class ConferenceServiceImpl implements ConferenceService {
   @Override
   @Transactional(readOnly = true)
   public ConferenceAvailabilityResponseDto checkAvailability(String conferenceCode) {
-    var conference = conferenceRepository.getByCode(conferenceCode);
+    var conference = conferenceRepository.getByConferenceCode(conferenceCode);
     if(conference.getStatus() != ConferenceStatus.SCHEDULED) {
       throw new  ConferenceException("The conference must be in status SCHEDULED. The current conference status: " + conference.getStatus());
     }

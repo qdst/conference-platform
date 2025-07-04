@@ -13,13 +13,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ConferenceRepository extends JpaRepository<Conference, Long> {
 
-  default Conference getByCode(String code) {
-    return findByCode(code)
+  default Conference getByConferenceCode(String conferenceCode) {
+    return findByConferenceCode(conferenceCode)
         .orElseThrow(() ->
-            new ConferenceException("Conference with code " + code + " not found"));
+            new ConferenceException("Conference with code '" + conferenceCode + "' not found"));
   }
 
-  Optional<Conference> findByCode(String conferenceCode);
+  Optional<Conference> findByConferenceCode(String conferenceCode);
 
   @Query("""
       SELECT CASE WHEN COUNT(c)>0 THEN TRUE ELSE FALSE END
@@ -28,7 +28,7 @@ public interface ConferenceRepository extends JpaRepository<Conference, Long> {
       AND c.startTime <= :newConferenceEndTime
       AND c.endTime   >= :newConferenceStartTime
       AND c.status = com.conference.platform.control.model.ConferenceStatus.SCHEDULED
-      AND (:conferenceCode IS NULL OR c.code <> :conferenceCode)
+      AND (:conferenceCode IS NULL OR c.conferenceCode <> :conferenceCode)
       """)
   boolean existsOverlapping(
       @Param("roomCode") String roomCode,

@@ -14,7 +14,7 @@ public final class ConferenceMapper {
 
   public static ConferenceSummaryResponseDto toSummaryResponseDto(Conference conference, LocationDto locationDto) {
     return ConferenceSummaryResponseDto.builder()
-        .code(conference.getCode())
+        .code(conference.getConferenceCode())
         .title(conference.getTitle())
         .startTime(conference.getStartTime())
         .endTime(conference.getEndTime())
@@ -28,7 +28,7 @@ public final class ConferenceMapper {
 
   public static ConferenceResponseDto toResponseDto(Conference conference) {
     return ConferenceResponseDto.builder()
-        .code(conference.getCode())
+        .code(conference.getConferenceCode())
         .title(conference.getTitle())
         .startTime(conference.getStartTime())
         .endTime(conference.getEndTime())
@@ -43,7 +43,7 @@ public final class ConferenceMapper {
       String conferenceCode,
       Integer roomCapacity) {
     var conference = new Conference();
-    conference.setCode(conferenceCode);
+    conference.setConferenceCode(conferenceCode);
     conference.setRoomCode(requestDto.getRoomCode());
     conference.setTitle(requestDto.getTitle());
     conference.setStatus(ConferenceStatus.SCHEDULED);

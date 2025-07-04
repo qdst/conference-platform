@@ -1,7 +1,6 @@
 package com.conference.platform.control.service;
 
 import com.conference.platform.control.dto.controller.ParticipantRegistrationRequestDto;
-import com.conference.platform.control.dto.controller.ParticipantRegistrationResponseDto;
 import com.conference.platform.control.dto.controller.ParticipantResponseDto;
 import com.conference.platform.control.mapper.ParticipantMapper;
 import com.conference.platform.control.model.ConferenceStatus;
@@ -24,10 +23,10 @@ public class ParticipantServiceImpl implements ParticipantService {
   private final IdentificationCodeService identificationCodeService;
 
   @Override
-  public ParticipantRegistrationResponseDto registerParticipant(
+  public ParticipantResponseDto registerParticipant(
       String conferenceCode,
       ParticipantRegistrationRequestDto requestDto) {
-    var conference = conferenceRepository.getByCode(conferenceCode);
+    var conference = conferenceRepository.getByConferenceCode(conferenceCode);
     //TODO: Move validation into conference service, remove duplication
 
     if (conference.getStatus() != ConferenceStatus.SCHEDULED) {
@@ -45,7 +44,7 @@ public class ParticipantServiceImpl implements ParticipantService {
     }
   }
 
-  private ParticipantRegistrationResponseDto createConferenceNewParticipant(String conferenceCode,
+  private ParticipantResponseDto createConferenceNewParticipant(String conferenceCode,
       ParticipantRegistrationRequestDto requestDto, Conference conference) {
     var totalNumberOfParticipant =
         participantRepository.countAllConferenceParticipant(conferenceCode);
@@ -60,22 +59,23 @@ public class ParticipantServiceImpl implements ParticipantService {
   }
 
   @Override
-  public void cancelRegistration(String registrationCode) {
-    var participant = participantRepository.getByParticipantCode(registrationCode);
+  public ParticipantResponseDto cancelRegistration(String registrationCode) {
+    var participant = participantRepository.getByRegistrationCode(registrationCode);
     if (participant.getStatus() != ParticipantStatus.REGISTERED) {
       throw null;
     }
     participant.setStatus(ParticipantStatus.CANCELLED);
-    participantRepository.save(participant);
+    var canceledParticipant = participantRepository.save(participant);
+    return ParticipantMapper.toDto(canceledParticipant, canceledParticipant.getConference().getConferenceCode());
   }
 
   @Override
   public ParticipantResponseDto getByParticipantCode(String registrationCode) {
-    var participant = participantRepository.getByParticipantCode(registrationCode);
+    var participant = participantRepository.getByRegistrationCode(registrationCode);
     return ParticipantResponseDto.builder()
         .firstName(participant.getFirstName())
         .lastName(participant.getLastName())
-        .conferenceCode(participant.getConference().getCode())
+        .conferenceCode(participant.getConference().getConferenceCode())
         .build();
   }
 

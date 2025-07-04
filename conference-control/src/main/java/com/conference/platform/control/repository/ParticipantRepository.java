@@ -12,8 +12,8 @@ import org.springframework.stereotype.Repository;
 public interface ParticipantRepository extends JpaRepository<Participant, Long> {
 
 
-  default Participant getByParticipantCode(String participantCode) {
-    return findByRegistrationCode(participantCode).orElseThrow(null);
+  default Participant getByRegistrationCode(String registrationCode) {
+    return findByRegistrationCode(registrationCode).orElseThrow(null);
   }
 
   Optional<Participant> findByRegistrationCode(String registrationCode);
@@ -22,21 +22,21 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
   @Query("""
         UPDATE Participant p
            SET p.status = com.conference.platform.control.model.ParticipantStatus.CANCELLED
-         WHERE p.conference.code = :conferenceCode
+         WHERE p.conference.conferenceCode = :conferenceCode
          AND p.status <> com.conference.platform.control.model.ParticipantStatus.CANCELLED
       """)
   int cancelAllRegistrationsForConference(@Param("conferenceCode") String conferenceCode);
 
   @Query("""
         SELECT COUNT(p) FROM Participant p
-        WHERE p.conference.code = :conferenceCode
+        WHERE p.conference.conferenceCode = :conferenceCode
         AND p.status != com.conference.platform.control.model.ParticipantStatus.CANCELLED
       """)
   int countAllActiveConferenceParticipant(@Param("conferenceCode") String conferenceCode);
 
   @Query("""
       SELECT COUNT(*) FROM Participant p
-      WHERE p.conference.code = :conferenceCode
+      WHERE p.conference.conferenceCode = :conferenceCode
       """)
   int countAllConferenceParticipant(@Param("conferenceCode") String conferenceCode);
 }

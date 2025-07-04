@@ -18,7 +18,7 @@ public class FeedbackExternalController {
 
   private final FeedbackService feedbackService;
 
-  @PostMapping("/participants/{registrationCode}/feedback")
+  @PostMapping("/participants/{registrationCode}/new-feedback")
   public FeedbackResponseDto createFeedback(
       @PathVariable String registrationCode,
       @Valid @RequestBody FeedbackRequestDto feedbackRequestDto) {

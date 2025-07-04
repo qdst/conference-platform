@@ -12,7 +12,7 @@
       <column name="id" type="BIGINT" defaultValueSequenceNext="conference_t_id_seq">
         <constraints primaryKey="true" nullable="false"/>
       </column>
-      <column name="code" type="CHAR(26)">
+      <column name="conference_code" type="CHAR(26)">
         <constraints nullable="false" unique="true"/>
       </column>
       <column name="total_capacity" type="INT4">
@@ -58,7 +58,7 @@
       <column name="gender" type="VARCHAR(8)">
         <constraints nullable="false"/>
       </column>
-      <column name="status" type="VARCHAR(8)">
+      <column name="status" type="VARCHAR(16)">
         <constraints nullable="false"/>
       </column>
       <column name="email" type="VARCHAR(128)">

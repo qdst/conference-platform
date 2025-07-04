@@ -20,9 +20,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Formula;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
-import org.hibernate.annotations.Where;
 
 @Getter
 @Setter
@@ -44,7 +41,7 @@ public class Conference {
   @Setter(AccessLevel.NONE)
   private Long id;
 
-  private String code;
+  private String conferenceCode;
 
   private String title;
 
@@ -68,8 +65,6 @@ public class Conference {
       cascade = CascadeType.ALL,
       orphanRemoval = true,
       fetch = FetchType.LAZY)
-  @Where(clause = "status = 'REGISTERED'")
-  @LazyCollection(LazyCollectionOption.EXTRA)
   private final List<Participant> participants = new ArrayList<>();
 
   public void addParticipant(Participant participant) {

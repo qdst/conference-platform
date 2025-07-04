@@ -2,7 +2,7 @@ package com.conference.platform.control.controller.external;
 
 import com.conference.platform.control.dto.controller.ConferenceSummaryResponseDto;
 import com.conference.platform.control.dto.controller.ParticipantRegistrationRequestDto;
-import com.conference.platform.control.dto.controller.ParticipantRegistrationResponseDto;
+import com.conference.platform.control.dto.controller.ParticipantResponseDto;
 import com.conference.platform.control.service.ConferenceService;
 import com.conference.platform.control.service.ParticipantService;
 import jakarta.validation.Valid;
@@ -44,9 +44,13 @@ public class ConferenceExternalController {
   }
 
   @PostMapping("/{conferenceCode}/participant")
-  public ParticipantRegistrationResponseDto registerParticipant(@PathVariable String conferenceCode,
+  public ParticipantResponseDto registerParticipant(@PathVariable String conferenceCode,
       @Valid @RequestBody ParticipantRegistrationRequestDto requestDto) {
     return participantService.registerParticipant(conferenceCode, requestDto);
   }
 
+  @GetMapping("/{conferenceCode}")
+  public ConferenceSummaryResponseDto getConference(@PathVariable String conferenceCode) {
+    return conferenceService.getConferenceSummary(conferenceCode);
+  }
 }

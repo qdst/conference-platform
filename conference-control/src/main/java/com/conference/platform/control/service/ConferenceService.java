@@ -11,6 +11,7 @@ import java.util.List;
 public interface ConferenceService {
 
   ConferenceResponseDto getConference(String conferenceCode);
+  ConferenceSummaryResponseDto getConferenceSummary(String conferenceCode);
   ConferenceResponseDto createConference(CreateConferenceRequestDto requestDto);
   ConferenceResponseDto cancelConference(String conferenceCode);
   ConferenceResponseDto updateConference(String conferenceCode, UpdateConferenceRequestDto requestDto);

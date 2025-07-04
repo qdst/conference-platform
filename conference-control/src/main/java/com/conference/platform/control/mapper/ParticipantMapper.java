@@ -1,7 +1,7 @@
 package com.conference.platform.control.mapper;
 
 import com.conference.platform.control.dto.controller.ParticipantRegistrationRequestDto;
-import com.conference.platform.control.dto.controller.ParticipantRegistrationResponseDto;
+import com.conference.platform.control.dto.controller.ParticipantResponseDto;
 import com.conference.platform.control.model.ParticipantStatus;
 import com.conference.platform.control.model.entity.Participant;
 
@@ -18,8 +18,8 @@ public final class ParticipantMapper {
     return participant;
   }
 
-  public static ParticipantRegistrationResponseDto toDto(Participant participant, String conferenceCode) {
-    return ParticipantRegistrationResponseDto.builder()
+  public static ParticipantResponseDto toDto(Participant participant, String conferenceCode) {
+    return ParticipantResponseDto.builder()
         .firstName(participant.getFirstName())
         .lastName(participant.getLastName())
         .email(participant.getEmail())
@@ -27,6 +27,7 @@ public final class ParticipantMapper {
         .dateOfBirth(participant.getDateOfBirth())
         .gender(participant.getGender())
         .conferenceCode(conferenceCode)
+        .participantStatus(participant.getStatus())
         .build();
   }
 }
