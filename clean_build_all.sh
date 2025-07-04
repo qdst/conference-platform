@@ -3,9 +3,7 @@ set -euo pipefail
 
 ROOT_BUILD="./build.gradle"
 
-mapfile -t projects < <(find . -type f -name 'build.gradle' \
-                          \! -path "$ROOT_BUILD" \
-                       | xargs -n1 dirname)
+mapfile -t projects < <(find . -type f -name 'build.gradle' ! -path "$ROOT_BUILD" -printf '%h\n')
 
 if [ "${#projects[@]}" -eq 0 ]; then
   echo "No sub-projects with build.gradle found."

@@ -47,4 +47,30 @@ public interface ConferenceRepository extends JpaRepository<Conference, Long> {
       @Param("startTime") LocalDateTime startTime,
       @Param("endTime") LocalDateTime endTime);
 
+  @Query("""
+        SELECT EXISTS
+        (SELECT 1
+            FROM Conference c
+           WHERE c.roomCode = :roomCode
+             AND c.status = com.conference.platform.control.model.ConferenceStatus.SCHEDULED
+             AND c.startTime >= :currentTime)
+      """)
+  boolean roomHasUpcomingConference(
+      @Param("roomCode") String roomCode,
+      @Param("currentTime") LocalDateTime currentTime);
+
+  @Query("""
+        SELECT EXISTS
+        (SELECT 1
+            FROM Conference c
+           WHERE c.roomCode = :roomCode
+             AND c.status = com.conference.platform.control.model.ConferenceStatus.SCHEDULED
+             AND c.startTime >= :currentTime
+             AND c.activeParticipantsCount > :newRoomCapacity)
+      """)
+  boolean conferenceWillExceedCapacity(
+      @Param("roomCode") String roomCode,
+      @Param("currentTime") LocalDateTime currentTime,
+      @Param("newRoomCapacity") Integer newRoomCapacity);
+
 }

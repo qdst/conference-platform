@@ -1,8 +1,8 @@
 package com.conference.platform.room.service;
 
-import com.conference.platform.room.dto.CreateRoomRequestDto;
-import com.conference.platform.room.dto.RoomResponseDto;
-import com.conference.platform.room.dto.UpdateRoomRequestDto;
+import com.conference.platform.room.dto.controller.CreateRoomRequestDto;
+import com.conference.platform.room.dto.controller.RoomResponseDto;
+import com.conference.platform.room.dto.controller.UpdateRoomRequestDto;
 import java.util.List;
 
 public interface RoomService {

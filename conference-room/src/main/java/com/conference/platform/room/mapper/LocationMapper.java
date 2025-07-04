@@ -1,6 +1,6 @@
 package com.conference.platform.room.mapper;
 
-import com.conference.platform.room.dto.LocationDto;
+import com.conference.platform.room.dto.controller.LocationDto;
 import com.conference.platform.room.model.entity.Location;
 
 public class LocationMapper {

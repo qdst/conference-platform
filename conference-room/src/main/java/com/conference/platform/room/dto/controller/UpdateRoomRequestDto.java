@@ -1,4 +1,4 @@
-package com.conference.platform.room.dto;
+package com.conference.platform.room.dto.controller;
 
 import com.conference.platform.room.model.RoomStatus;
 import lombok.AccessLevel;
@@ -11,10 +11,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class RoomResponseDto {
-    private String roomCode;
+public class UpdateRoomRequestDto {
     private String name;
-    private Integer capacity;
-    private LocationDto locationDto;
     private RoomStatus roomStatus;
+    private Integer capacity;
   }

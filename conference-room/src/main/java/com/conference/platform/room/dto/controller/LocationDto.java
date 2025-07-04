@@ -1,4 +1,4 @@
-package com.conference.platform.room.dto;
+package com.conference.platform.room.dto.controller;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

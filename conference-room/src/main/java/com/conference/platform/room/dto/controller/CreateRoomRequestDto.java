@@ -1,4 +1,4 @@
-package com.conference.platform.room.dto;
+package com.conference.platform.room.dto.controller;
 
 import com.conference.platform.room.model.RoomStatus;
 import jakarta.validation.constraints.Min;
