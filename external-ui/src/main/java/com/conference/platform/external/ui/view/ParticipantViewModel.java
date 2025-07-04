@@ -14,7 +14,7 @@ public class ParticipantViewModel {
   private String lastName;
   private Gender gender;
   private String email;
-  @DateTimeFormat(pattern = "dd-MM-yyyy")
+  @DateTimeFormat(pattern = "yyyy-MM-dd")
   private LocalDate dateOfBirth;
   private ParticipantStatus participantStatus;
   private String registrationCode;

@@ -30,10 +30,9 @@ public class RoomController {
   @GetMapping("/{roomCode}")
   public String editRoom(
       @PathVariable String roomCode,
-      @ModelAttribute("room") RoomViewModel roomViewModel,
       Model model) {
 
-    if(roomViewModel == null) {
+    if(!model.containsAttribute("room")) {
       var roomResponseDto = roomService.getRoom(roomCode);
       var foundRoomViewModel = RoomMapper.toViewModel(roomResponseDto);
       model.addAttribute("room", foundRoomViewModel);

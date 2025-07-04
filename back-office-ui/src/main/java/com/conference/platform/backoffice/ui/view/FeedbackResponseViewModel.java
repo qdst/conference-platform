@@ -14,6 +14,6 @@ public class FeedbackResponseViewModel {
   private String title;
   private String text;
   private String author;
-  @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm")
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private LocalDateTime createdAt;
 }

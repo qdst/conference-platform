@@ -9,10 +9,6 @@
 <form th:action="@{/conferences}" th:object="${conference}" method="post">
   <fieldset th:style="'width: 50ch;'">
 
-    <label>Code:</label><br/>
-    <input type="text" th:field="*{code}" disabled th:style="'width: 40ch;'"/>
-    <br/><br/>
-
     <label>Title:</label><br/>
     <input type="text" th:field="*{title}" required th:style="'width: 40ch;'"/>
     <br/><br/>
@@ -27,10 +23,6 @@
 
     <label>Room Code:</label><br/>
     <input type="text" th:field="*{roomCode}" required th:style="'width: 40ch;'"/>
-    <br/><br/>
-
-    <label>Total Capacity:</label><br/>
-    <input type="number" disabled th:style="'width: 40ch;'"/>
     <br/><br/>
 
   </fieldset>

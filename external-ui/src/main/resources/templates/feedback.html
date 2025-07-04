@@ -70,7 +70,7 @@
 
     <label>Created At:</label><br/>
     <input type="text"
-           th:value="${#temporals.format(feedbackResponse.createdAt, 'dd-MM-yyyy HH:mm')}"
+           th:value="${#temporals.format(feedbackResponse.createdAt, 'dd-MM-yyyy''T''HH:mm')}"
            disabled
            th:style="'width: 40ch;'"/>
   </fieldset>

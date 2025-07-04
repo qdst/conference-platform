@@ -56,14 +56,14 @@
 
         <p>
           <strong>Start Time:</strong>
-          <span th:text="${#temporals.format(conf.startTime, 'dd-MM-yyyy HH:mm')}">
+          <span th:text="${#temporals.format(conf.startTime, 'yyyy-MM-dd''T''HH:mm')}">
               2025-07-02 09:00
             </span>
         </p>
 
         <p>
           <strong>End Time:</strong>
-          <span th:text="${#temporals.format(conf.endTime, 'dd-MM-yyyy HH:mm')}">
+          <span th:text="${#temporals.format(conf.endTime, 'yyyy-MM-dd''T''HH:mm')}">
               2025-07-02 17:00
             </span>
         </p>

@@ -9,8 +9,8 @@
 <p>
   <strong>Conference code:</strong> <span th:text="${conference.code}"></span><br/>
   <strong>When:</strong>
-  <span th:text="${#temporals.format(conference.startTime, 'dd-MM-yyyy HH:mm')}"/>
-  <span th:text="${#temporals.format(conference.endTime, 'dd-MM-yyyy HH:mm')}"/><br/>
+  <span th:text="${#temporals.format(conference.startTime, 'yyyy-MM-dd''T''HH:mm')}"/>
+  <span th:text="${#temporals.format(conference.endTime, 'yyyy-MM-dd''T''HH:mm')}"/><br/>
   <strong>Location:</strong>
   <span th:text="${conference.addressLine1}"/>,
   <span th:text="${conference.addressLine2}"/>,

@@ -28,6 +28,7 @@ public class RoomServiceImpl implements RoomService {
   @Override
   public RoomResponseDto updateRoom(UpdateRoomRequestDto updateRoomRequestDto, String roomCode) {
     // TODO: validate for upcoming conferences (e.g. capacity, status)
+
     var roomForUpdate = roomRepository.findByRoomCode(roomCode).orElseThrow();
     RoomMapper.updateRoom(roomForUpdate, updateRoomRequestDto);
     var updatedRoom = roomRepository.save(roomForUpdate);

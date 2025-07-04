@@ -40,7 +40,7 @@
           <div th:style="'display: inline-block;'">
             <strong>Submitted At:</strong>
             <input type="text"
-                   th:value="${#temporals.format(feedback.createdAt, 'dd-MM-yyyy HH:mm')}"
+                   th:value="${#temporals.format(feedback.createdAt, 'yyyy-MM-dd''T''HH:mm')}"
                    disabled
                    th:style="'width: 20ch; border: none; background: transparent; margin-left: 0.5ch;'"/>
           </div>

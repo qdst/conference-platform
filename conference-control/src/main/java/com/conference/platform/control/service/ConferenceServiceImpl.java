@@ -141,8 +141,8 @@ public class ConferenceServiceImpl implements ConferenceService {
     var activeRegistrations = participantRepository.countAllActiveConferenceParticipant(conferenceCode);
     validateRoomCapacity(maxCapacity, activeRegistrations);
 
+    conference.setStartTime(startTimeForUpdate);
     conference.setEndTime(endTimeForUpdate);
-    conference.setStartTime(endTimeForUpdate);
     conference.setRoomCode(roomCodeForUpdate);
     var updatedConference = conferenceRepository.save(conference);
 

@@ -33,12 +33,12 @@ public class ConferenceExternalController {
   public List<ConferenceSummaryResponseDto> findAvailable(
       @RequestParam
       @NotNull(message = "startTime is required")
-      @DateTimeFormat(pattern = "dd-MM-yyyy'T'HH:mm")
+      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
       LocalDateTime startTime,
 
       @RequestParam("endTime")
       @NotNull(message = "endTime is required")
-      @DateTimeFormat(pattern = "dd-MM-yyyy'T'HH:mm")
+      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
       LocalDateTime endTime) {
     return conferenceService.findAvailableConferences(startTime, endTime);
   }

@@ -13,10 +13,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class SearchCriteriaViewModel {
 
   @NotNull(message = "Start time is required")
-  @DateTimeFormat(pattern = "dd-MM-yyyy'T'HH:mm")
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private LocalDateTime startTime;
 
   @NotNull(message = "End time is required")
-  @DateTimeFormat(pattern = "dd-MM-yyyy'T'HH:mm")
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private LocalDateTime endTime;
 }
