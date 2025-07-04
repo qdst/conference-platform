@@ -1,6 +1,6 @@
-package com.conference.platform.control.dto.controller;
+package com.conference.platform.external.ui.dto.httpclient;
 
-import com.conference.platform.control.model.Gender;
+import com.conference.platform.external.ui.view.Gender;
 import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -12,12 +12,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ParticipantRegistrationResponseDto {
+public class ParticipantRegistrationRequestDto {
+
   private String firstName;
   private String lastName;
   private String email;
   private LocalDate dateOfBirth;
   private Gender gender;
-  private String conferenceCode;
-  private String registrationCode;
 }

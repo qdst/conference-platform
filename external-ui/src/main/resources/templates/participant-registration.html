@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Registration Success</title>
+
+</head>
+<body>
+<section layout:fragment="content">
+
+  <h2>Successfully Registered for Conference <span th:text="${participant.conferenceCode}">CODE</span></h2>
+
+  <fieldset th:style="'width: 50ch; padding: 1em; border: 1px solid #ccc;'">
+    <legend>Registration Details</legend>
+
+    <label>Conference Code:</label><br/>
+    <input type="text"
+           th:value="${participant.conferenceCode}"
+           disabled
+           th:style="'width: 40ch;'"/>
+    <br/><br/>
+
+    <label>Registration Code:</label><br/>
+    <input type="text"
+           th:value="${participant.registrationCode}"
+           disabled
+           th:style="'width: 40ch;'"/>
+    <br/><br/>
+
+    <label>First Name:</label><br/>
+    <input type="text"
+           th:value="${participant.firstName}"
+           disabled
+           th:style="'width: 40ch;'"/>
+    <br/><br/>
+
+    <label>Last Name:</label><br/>
+    <input type="text"
+           th:value="${participant.lastName}"
+           disabled
+           th:style="'width: 40ch;'"/>
+    <br/><br/>
+
+    <label>Gender:</label><br/>
+    <input type="text"
+           th:value="${participant.gender}"
+           disabled
+           th:style="'width: 40ch;'"/>
+    <br/><br/>
+
+    <label>Email:</label><br/>
+    <input type="text"
+           th:value="${participant.email}"
+           disabled
+           th:style="'width: 40ch;'"/>
+    <br/><br/>
+
+    <label>Date of Birth:</label><br/>
+    <input type="text"
+           th:value="${#temporals.format(participant.dateOfBirth, 'dd-MM-yyyy')}"
+           disabled
+           th:style="'width: 40ch;'"/>
+    <br/><br/>
+
+    <label>Status:</label><br/>
+    <input type="text"
+           th:value="${participant.participantStatus}"
+           disabled
+           th:style="'width: 40ch;'"/>
+    <br/><br/>
+  </fieldset>
+</section>
+</body>
+</html>

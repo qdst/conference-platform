@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Cancel Participant Registration</title>
+</head>
+<body>
+<div th:if="${cancelForm != null}">
+  <h1>Cancel Participant Registration</h1>
+  <form th:action="@{/participants/cancel}"
+        th:object="${cancelForm}"
+        method="post">
+
+    <label>Registration Code:</label><br/>
+    <input type="text"
+           th:field="*{registrationCode}"
+           required
+           th:style="'width: 40ch;'"/>
+    <br/><br/>
+    <button type="submit">Confirm Cancellation</button>
+  </form>
+</div>
+<hr/>
+
+<div th:if="${participant != null}">
+  <h2>Cancellation Details</h2>
+  <fieldset th:style="'width: 50ch;'">
+    <label>First Name:</label><br/>
+    <input type="text" th:value="${participant.firstName}" disabled th:style="'width: 40ch;'"/>
+    <br/><br/>
+
+    <label>Last Name:</label><br/>
+    <input type="text" th:value="${participant.lastName}" disabled th:style="'width: 40ch;'"/>
+    <br/><br/>
+
+    <label>Email:</label><br/>
+    <input type="text" th:value="${participant.email}" disabled th:style="'width: 40ch;'"/>
+    <br/><br/>
+
+    <label>Date of Birth:</label><br/>
+    <input type="text"
+           th:value="${#temporals.format(participant.dateOfBirth, 'dd-MM-yyyy')}"
+           disabled th:style="'width: 40ch;'"/>
+    <br/><br/>
+
+    <label>Gender:</label><br/>
+    <input type="text" th:value="${participant.gender}" disabled th:style="'width: 40ch;'"/>
+    <br/><br/>
+
+    <label>Conference Code:</label><br/>
+    <input type="text" th:value="${participant.conferenceCode}" disabled th:style="'width: 40ch;'"/>
+    <br/><br/>
+
+    <label>Registration Code:</label><br/>
+    <input type="text" th:value="${participant.registrationCode}" disabled th:style="'width: 40ch;'"/>
+    <br/><br/>
+
+    <label>Status:</label><br/>
+    <input type="text" th:value="${participant.participantStatus}" disabled th:style="'width: 40ch;'"/>
+  </fieldset>
+</div>
+</body>
+</html>

@@ -1,6 +1,10 @@
 package com.conference.platform.external.ui.httpclient;
 
 import com.conference.platform.external.ui.dto.httpclient.ConferenceSummaryResponseDto;
+import com.conference.platform.external.ui.dto.httpclient.FeedbackRequestDto;
+import com.conference.platform.external.ui.dto.httpclient.FeedbackResponseDto;
+import com.conference.platform.external.ui.dto.httpclient.ParticipantRegistrationRequestDto;
+import com.conference.platform.external.ui.dto.httpclient.ParticipantResponseDto;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -13,18 +17,31 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class ConferenceGatewayHttpClientImpl implements ConferenceGatewayHttpClient {
 
-  private final static ParameterizedTypeReference<List<ConferenceSummaryResponseDto>> RESPONSE_PARAMETERIZED_TYPE_REFERENCE =
+  private final static ParameterizedTypeReference<List<ConferenceSummaryResponseDto>> CONFERENCES_RESPONSE_TYPE =
       new ParameterizedTypeReference<>() {
       };
+
   private final String conferenceSearchPath;
+  private final String cancelParticipantPath;
+  private final String conferenceParticipantPath;
+  private final String oneConferencePath;
+  private final String leaveFeedbackByRegistration;
 
   private final RestTemplate restTemplate;
 
   public ConferenceGatewayHttpClientImpl(
+      @Value("${conference.gateway.rest.client.paths.conference.one}") String oneConferencePath,
       @Value("${conference.gateway.rest.client.paths.conference.search}") String conferenceSearchPath,
+      @Value("${conference.gateway.rest.client.paths.conference.participant}") String conferenceParticipantPath,
+      @Value("${conference.gateway.rest.client.paths.conference.participant.cancel}") String cancelParticipantPath,
+      @Value("${conference.gateway.rest.client.paths.conference-feedback.by-registration.leave}") String leaveFeedbackByRegistration,
       RestTemplate restTemplate) {
     this.restTemplate = restTemplate;
     this.conferenceSearchPath = conferenceSearchPath;
+    this.conferenceParticipantPath = conferenceParticipantPath;
+    this.cancelParticipantPath = cancelParticipantPath;
+    this.oneConferencePath = oneConferencePath;
+    this.leaveFeedbackByRegistration = leaveFeedbackByRegistration;
   }
 
   @Override
@@ -34,28 +51,34 @@ public class ConferenceGatewayHttpClientImpl implements ConferenceGatewayHttpCli
             conferenceSearchPath,
             HttpMethod.GET,
             null,
-            RESPONSE_PARAMETERIZED_TYPE_REFERENCE,
+            CONFERENCES_RESPONSE_TYPE,
             requestParameters)
         .getBody();
   }
-//
-//  @Override
-//  public ConferenceResponseDto cancelConference(String conferenceCode) {
-//    ResponseEntity<ConferenceResponseDto> responseEntity =
-//        restTemplate.postForEntity(oneConferencePath, null, ConferenceResponseDto.class, conferenceCode);
-//    return responseEntity.getBody();
-//  }
-//
-//  @Override
-//  public ConferenceResponseDto updateConference(UpdateConferenceRequestDto requestDto, String conferenceCode) {
-//    HttpEntity<UpdateConferenceRequestDto> requestEntity = new HttpEntity<>(requestDto);
-//    return restTemplate.exchange(oneConferencePath, HttpMethod.PUT, requestEntity, ConferenceResponseDto.class,
-//        conferenceCode).getBody();
-//  }
-//
-//  @Override
-//  public ConferenceResponseDto getConference(String conferenceCode) {
-//    return restTemplate.getForObject(oneConferencePath, ConferenceResponseDto.class, conferenceCode);
-//  }
+
+  @Override
+  public ConferenceSummaryResponseDto getConferenceSummary(String conferenceCode) {
+    return restTemplate.getForObject(oneConferencePath, ConferenceSummaryResponseDto.class, conferenceCode);
+  }
+
+  @Override
+  public ParticipantResponseDto registerParticipant(ParticipantRegistrationRequestDto requestDto, String conferenceCode) {
+        var responseEntity = restTemplate.postForEntity(conferenceParticipantPath, requestDto, ParticipantResponseDto.class, conferenceCode);
+    return responseEntity.getBody();
+  }
+
+  @Override
+  public ParticipantResponseDto cancelParticipantRegistration(String participantRegistrationCode) {
+    var responseEntity =
+        restTemplate.postForEntity(cancelParticipantPath, null, ParticipantResponseDto.class, participantRegistrationCode);
+    return responseEntity.getBody();
+  }
+
+  @Override
+  public FeedbackResponseDto leaveFeedback(FeedbackRequestDto feedbackRequestDto, String registrationCode) {
+    var responseEntity =
+        restTemplate.postForEntity(leaveFeedbackByRegistration, feedbackRequestDto, FeedbackResponseDto.class, registrationCode);
+    return responseEntity.getBody();
+  }
 
 }

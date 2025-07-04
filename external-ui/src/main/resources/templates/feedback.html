@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Feedback</title>
+</head>
+<body>
+
+<div th:if="${feedbackResponse == null}">
+  <h1>Submit Feedback</h1>
+  <form th:action="@{/feedback}" th:object="${feedbackForm}" method="post">
+    <fieldset th:style="'width: 50ch;'">
+      <label>Registration Code:</label><br/>
+      <input type="text"
+             th:field="*{registrationCode}"
+             required
+             th:style="'width: 40ch;'"/>
+      <div th:if="${#fields.hasErrors('registrationCode')}"
+           th:errors="*{registrationCode}"
+           th:style="'color: red;'"></div>
+      <br/><br/>
+
+      <label>Title:</label><br/>
+      <input type="text"
+             th:field="*{title}"
+             required
+             th:style="'width: 40ch;'"/>
+      <div th:if="${#fields.hasErrors('title')}"
+           th:errors="*{title}"
+           th:style="'color: red;'"></div>
+      <br/><br/>
+
+      <label>Text:</label><br/>
+      <textarea th:field="*{text}"
+                required
+                th:style="'width: 40ch; height: 10em;'"></textarea>
+      <div th:if="${#fields.hasErrors('text')}"
+           th:errors="*{text}"
+           th:style="'color: red;'"></div>
+      <br/><br/>
+
+      <button type="submit">Submit Feedback</button>
+    </fieldset>
+  </form>
+</div>
+
+<div th:if="${feedbackResponse != null}">
+  <h1>Feedback Received</h1>
+  <fieldset th:style="'width: 50ch;'">
+
+    <label>Title:</label><br/>
+    <input type="text"
+           th:value="${feedbackResponse.title}"
+           disabled
+           th:style="'width: 40ch;'"/>
+    <br/><br/>
+
+    <label>Text:</label><br/>
+    <textarea disabled
+              th:text="${feedbackResponse.text}"
+              th:style="'width: 40ch; height: 10em;'"></textarea>
+    <br/><br/>
+
+    <label>Author:</label><br/>
+    <input type="text"
+           th:value="${feedbackResponse.author}"
+           disabled
+           th:style="'width: 40ch;'"/>
+    <br/><br/>
+
+    <label>Created At:</label><br/>
+    <input type="text"
+           th:value="${#temporals.format(feedbackResponse.createdAt, 'dd-MM-yyyy HH:mm')}"
+           disabled
+           th:style="'width: 40ch;'"/>
+  </fieldset>
+</div>
+
+</body>
+</html>

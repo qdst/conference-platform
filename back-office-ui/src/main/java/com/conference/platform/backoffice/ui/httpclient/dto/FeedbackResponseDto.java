@@ -11,8 +11,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class UpdateConferenceRequestDto {
-  private LocalDateTime startTime;
-  private LocalDateTime endTime;
-  private String roomCode;
+public class FeedbackResponseDto {
+  private String title;
+  private String text;
+  private String author;
+  private LocalDateTime createdAt;
 }

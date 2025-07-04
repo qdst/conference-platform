@@ -7,4 +7,6 @@ import java.util.List;
 public interface ConferenceService {
 
   List<ConferenceSummaryResponseDto> searchAvailableConferences(LocalDateTime sartTime, LocalDateTime endTime);
+
+  ConferenceSummaryResponseDto getConferenceSummary(String conferenceCode);
 }

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Main Page</title>
+</head>
+<body>
+<h1>Welcome to the Backoffice</h1>
+
+<!-- Quick Create Links -->
+<fieldset th:style="'width: 50ch; padding: 1em; border: 1px solid #ccc;'">
+  <legend>Quick Create</legend>
+  <p><a th:href="@{/conferences/new}">Create New Conference</a></p>
+
+</fieldset>
+<fieldset th:style="'width: 50ch; padding: 1em; border: 1px solid #ccc;'">
+
+  <p><a th:href="@{/rooms/new}">Create New Room</a></p>
+</fieldset>
+<br/>
+
+<!-- Navigate by Code -->
+
+<fieldset th:style="'width: 50ch; padding: 1em; border: 1px solid #ccc;'">
+
+  <legend>Navigate by Code</legend>
+
+  <form th:action="@{/main/to-conference}" method="get" th:style="'margin-bottom: 1em;'">
+    <label>Conference Code:</label><br/>
+    <input type="text" name="conferenceCode" required th:style="'width: 40ch;'"/>
+    <br/><br/>
+    <button type="submit">Open Conference</button>
+  </form>
+
+</fieldset>
+<fieldset th:style="'width: 50ch; padding: 1em; border: 1px solid #ccc;'">
+
+  <form th:action="@{/main/to-room}" method="get" th:style="'margin-bottom: 1em;'">
+    <label>Room Code:</label><br/>
+    <input type="text" name="roomCode" required th:style="'width: 40ch;'"/>
+    <br/><br/>
+    <button type="submit">Open Room</button>
+  </form>
+
+</fieldset>
+<fieldset th:style="'width: 50ch; padding: 1em; border: 1px solid #ccc;'">
+
+  <form th:action="@{/main/to-feedback}" method="get">
+    <label>Feedback for Conference:</label><br/>
+    <input type="text" name="conferenceCode" required th:style="'width: 40ch;'"/>
+    <br/><br/>
+    <button type="submit">View Feedback</button>
+  </form>
+</fieldset>
+</body>
+</html>

@@ -11,20 +11,23 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
-public class BackOfficeGatewayHttpClientImpl implements BackOfficeGatewayHttpClient {
+public class ConferenceHttpClientImpl implements ConferenceHttpClient {
 
   private final String oneConferencePath;
+  private final String cancelConferencePath;
   private final String newConferencePath;
 
   private final RestTemplate restTemplate;
 
-  public BackOfficeGatewayHttpClientImpl(
+  public ConferenceHttpClientImpl(
       @Value("${backoffice.gateway.rest.client.paths.conference.one}") String oneConferencePath,
+      @Value("${backoffice.gateway.rest.client.paths.conference.cancel}") String cancelConferencePath,
       @Value("${backoffice.gateway.rest.client.paths.conference.new}") String newConferencePath,
       RestTemplate restTemplate) {
     this.restTemplate = restTemplate;
     this.oneConferencePath = oneConferencePath;
     this.newConferencePath = newConferencePath;
+    this.cancelConferencePath = cancelConferencePath;
   }
 
   @Override
@@ -37,7 +40,7 @@ public class BackOfficeGatewayHttpClientImpl implements BackOfficeGatewayHttpCli
   @Override
   public ConferenceResponseDto cancelConference(String conferenceCode) {
     ResponseEntity<ConferenceResponseDto> responseEntity =
-        restTemplate.postForEntity(oneConferencePath, null, ConferenceResponseDto.class, conferenceCode);
+        restTemplate.postForEntity(cancelConferencePath, null, ConferenceResponseDto.class, conferenceCode);
     return responseEntity.getBody();
   }
 

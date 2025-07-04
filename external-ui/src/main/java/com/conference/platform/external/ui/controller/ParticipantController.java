@@ -1,48 +1,47 @@
 package com.conference.platform.external.ui.controller;
 
-import com.conference.platform.external.ui.service.ConferenceService;
-import com.conference.platform.external.ui.view.SearchCriteriaViewModel;
+import com.conference.platform.external.ui.mapper.ParticipantMapper;
+import com.conference.platform.external.ui.service.ParticipantService;
+import com.conference.platform.external.ui.view.CancelParticipantRegistrationViewModel;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-@Validated
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/participants/")
+@RequestMapping("/participants")
 public class ParticipantController {
 
-  private final ConferenceService conferenceService;
+  private final ParticipantService participantService;
 
-  @GetMapping("/re")
-  public String searchPage(Model model) {
-    model.addAttribute("criteria", new SearchCriteriaViewModel());
-    model.addAttribute("conferences", List.of());
-    return "conference-search-result";
+  @GetMapping("/cancel")
+  public String showCancelForm(Model model) {
+    model.addAttribute("cancelForm", new CancelParticipantRegistrationViewModel());
+    return "cancel-participant-registration";
   }
 
-  @GetMapping("/search/results")
-  public String searchConferences(
-      @Valid @ModelAttribute("criteria") SearchCriteriaViewModel criteriaViewModel,
-      BindingResult bindingResult, Model model) {
+  @PostMapping("/cancel")
+  public String processCancellationRequest(
+      @Valid @ModelAttribute("cancelForm") CancelParticipantRegistrationViewModel cancelForm,
+      RedirectAttributes redirectAttributes) {
 
-    if (bindingResult.hasErrors()) {
-      model.addAttribute("conferences", List.of());
-      return "conference-search-result";
+    var cancelledParticipantDto =
+        participantService.cancelParticipantRegistration(cancelForm.getRegistrationCode());
 
-    } else {
-      var foundConferences =
-          conferenceService.searchAvailableConferences(criteriaViewModel.getStartTime(), criteriaViewModel.getEndTime());
-      model.addAttribute("conferences", foundConferences);
-      return "conference-search-result";
-    }
+    var cancelledRegistrationViewModel = ParticipantMapper.toViewModel(cancelledParticipantDto);
+
+    redirectAttributes.addFlashAttribute("participant", cancelledRegistrationViewModel);
+    return "redirect:/participants/" + cancelledRegistrationViewModel.getRegistrationCode() + "/cancelled";
   }
 
+  @GetMapping("/{registrationCode}/cancelled")
+  public String renderCancellationConfirmation() {
+    return "cancel-participant-registration";
+  }
 }

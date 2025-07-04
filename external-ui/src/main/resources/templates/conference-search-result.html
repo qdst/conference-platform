@@ -44,44 +44,52 @@
   <ul th:style="'list-style: none; padding: 0;'">
     <li th:each="conf : ${conferences}" th:style="'margin-bottom: 2em;'">
       <fieldset th:style="'width: 60ch; padding: 1em; border: 1px solid #ccc;'">
-        <legend th:text="${conf.code}">CODE</legend>
 
         <p>
+          <strong>Conference code:</strong>
+          <span th:text="${conf.code}"></span>
+        </p>
+        <p>
           <strong>Title:</strong>
-          <span th:text="${conf.title}">Conference Title</span>
+          <span th:text="${conf.title}"></span>
         </p>
 
         <p>
           <strong>Start Time:</strong>
-          <span th:text="${#temporals.format(conf.startTime, 'yyyy-MM-dd HH:mm')}">
+          <span th:text="${#temporals.format(conf.startTime, 'dd-MM-yyyy HH:mm')}">
               2025-07-02 09:00
             </span>
         </p>
 
         <p>
           <strong>End Time:</strong>
-          <span th:text="${#temporals.format(conf.endTime, 'yyyy-MM-dd HH:mm')}">
+          <span th:text="${#temporals.format(conf.endTime, 'dd-MM-yyyy HH:mm')}">
               2025-07-02 17:00
             </span>
         </p>
 
         <p>
           <strong>Total Capacity:</strong>
-          <span th:text="${conf.totalCapacity}">100</span>
+          <span th:text="${conf.totalCapacity}"/>
         </p>
 
         <p>
           <strong>Registered Participants:</strong>
-          <span th:text="${conf.registeredParticipants}">42</span>
+          <span th:text="${conf.registeredParticipants}"/>
         </p>
 
         <p>
           <strong>Location:</strong>
-          <span th:text="${conf.addressLine1}">123 Main St.</span>,
-          <span th:text="${conf.addressLine2}">Suite 200</span>,
-          <span th:text="${conf.city}">Tallinn</span>
+          <span th:text="${conf.addressLine1}"/>,
+          <span th:text="${conf.addressLine2}"/>,
+          <span th:text="${conf.city}"/>
         </p>
 
+        <!-- Register button -->
+        <form th:action="@{/conferences/{code}/participant(code=${conf.code})}"
+              method="get" th:style="'margin-top: 1em;'">
+          <button type="submit">Register</button>
+        </form>
       </fieldset>
     </li>
   </ul>

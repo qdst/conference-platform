@@ -4,7 +4,7 @@ import com.conference.platform.backoffice.ui.httpclient.dto.ConferenceResponseDt
 import com.conference.platform.backoffice.ui.httpclient.dto.CreateConferenceRequestDto;
 import com.conference.platform.backoffice.ui.httpclient.dto.UpdateConferenceRequestDto;
 
-public interface BackOfficeGatewayHttpClient {
+public interface ConferenceHttpClient {
 
   ConferenceResponseDto createConference(CreateConferenceRequestDto requestDto);
 

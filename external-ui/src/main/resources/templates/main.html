@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title th:text="${appTitle}">Conference Platform</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+</head>
+<body>
+<h1 th:text="${welcomeMessage}">Welcome to the Conference Platform</h1>
+
+<header>
+  <fieldset th:style="'width: 50ch; padding: 1em; border: 1px solid #ccc;'">
+    <p><a th:href="@{/conferences/search}">Search Conferences</a></p>
+  </fieldset>
+  <fieldset th:style="'width: 50ch; padding: 1em; border: 1px solid #ccc;'">
+      <p><a th:href="@{/participants/cancel}">Cancel Registration</a></p>
+  </fieldset>
+  <fieldset th:style="'width: 50ch; padding: 1em; border: 1px solid #ccc;'">
+  <p><a th:href="@{/feedback}">Leave Feedback</a></p>
+  </fieldset>
+  <br/>
+
+  <fieldset th:style="'width: 50ch; padding: 1em; border: 1px solid #ccc;'">
+    <form th:action="@{/main/register-participant}" method="get" th:style="'margin-bottom: 1em;'">
+      <label>Register for Conference:</label><br/>
+      <input type="text" name="conferenceCode" placeholder="Code" required th:style="'width: 40ch;'"/>
+      <br/><br/>
+      <button type="submit">Register</button>
+    </form>
+  </fieldset>
+</header>
+
+
+</body>
+</html>

@@ -44,15 +44,5 @@
 
   <button type="submit">Submit</button>
 </form>
-
-<div th:if="${createdRoom}">
-  <h2>Room Created</h2>
-  <p>Name: <span th:text="${createdRoom.name}"></span></p>
-  <p>Address: <span th:text="${createdRoom.addressLine1}"></span>,
-    <span th:text="${createdRoom.addressLine2}"></span>,
-    <span th:text="${createdRoom.city}"></span></p>
-  <p>Status: <span th:text="${createdRoom.roomStatus}"></span></p>
-  <p>Capacity: <span th:text="${createdRoom.capacity}"></span></p>
-</div>
 </body>
 </html>

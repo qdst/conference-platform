@@ -36,8 +36,8 @@ public class ConferenceController {
 
     if (conferenceViewModel == null || conferenceViewModel.getRoomCode() == null) {
       var conferenceResponseDto = conferenceService.getConference(code);
-      var viewMode = ConferenceMapper.toViewModel(conferenceResponseDto);
-      model.addAttribute("conference", viewMode);
+      var viewModel = ConferenceMapper.toViewModel(conferenceResponseDto);
+      model.addAttribute("conference", viewModel);
     }
     return "edit-conference";
   }

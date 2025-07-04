@@ -28,17 +28,21 @@
     <br/><br/>
 
     <label>Start Time:</label><br/>
-    <input type="datetime-local"
-           th:field="*{startTime}"
-           required
-           th:style="'width: 40ch;'"/>
+    <input
+        type="text"
+        th:field="*{startTime}"
+        th:value="${#temporals.format(startTime, 'dd-MM-yyyy HH:mm')}"
+        required
+        th:style="'width: 40ch;'"/>
     <br/><br/>
 
     <label>End Time:</label><br/>
-    <input type="datetime-local"
-           th:field="*{endTime}"
-           required
-           th:style="'width: 40ch;'"/>
+    <input
+        type="text"
+        th:field="*{endTime}"
+        th:value="${#temporals.format(endTime, 'dd-MM-yyyy HH:mm')}"
+        required
+        th:style="'width: 40ch;'"/>
     <br/><br/>
 
     <label>Room Code:</label><br/>

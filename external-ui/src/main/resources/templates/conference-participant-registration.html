@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Register for Conference</title>
+</head>
+<body>
+<h1>Register for <span th:text="${conference.title}"></span></h1>
+<p>
+  <strong>Conference code:</strong> <span th:text="${conference.code}"></span><br/>
+  <strong>When:</strong>
+  <span th:text="${#temporals.format(conference.startTime, 'dd-MM-yyyy HH:mm')}"/>
+  <span th:text="${#temporals.format(conference.endTime, 'dd-MM-yyyy HH:mm')}"/><br/>
+  <strong>Location:</strong>
+  <span th:text="${conference.addressLine1}"/>,
+  <span th:text="${conference.addressLine2}"/>,
+  <span th:text="${conference.city}">City</span><br/>
+  <strong>Available capacity:</strong>
+  <span th:text="${conference.totalCapacity - conference.registeredParticipants}"/>
+</p>
+
+<form th:action="@{/conferences/{code}/participant(code=${conference.code})}"
+      th:object="${participant}"
+      method="post">
+  <fieldset th:style="'width: 50ch;'">
+    <label>First Name:</label><br/>
+    <input type="text" th:field="*{firstName}" required th:style="'width: 40ch;'"/>
+    <br/><br/>
+
+    <label>Last name:</label><br/>
+    <input type="text" th:field="*{lastName}" required th:style="'width: 40ch;'"/>
+    <br/><br/>
+
+    <label>Gender:</label><br/>
+    <select th:field="*{gender}" required th:style="'width: 40ch;'">
+      <option th:each="g : ${T(com.conference.platform.external.ui.view.Gender).values()}"
+              th:value="${g}" th:text="${g}"/>
+    </select>
+    <br/><br/>
+
+    <label>Email:</label><br/>
+    <input type="email" th:field="*{email}" required th:style="'width: 40ch;'"/>
+    <br/><br/>
+
+    <label>Date of Birth:</label><br/>
+    <input type="date" th:field="*{dateOfBirth}" required th:style="'width: 40ch;'"/>
+    <br/><br/>
+
+    <button type="submit">Submit Registration</button>
+  </fieldset>
+</form>
+</body>
+</html>

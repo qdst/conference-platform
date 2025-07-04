@@ -1,5 +1,6 @@
 package com.conference.platform.external.ui.controller;
 
+import com.conference.platform.external.ui.mapper.ConferenceSummaryMapper;
 import com.conference.platform.external.ui.service.ConferenceService;
 import com.conference.platform.external.ui.view.SearchCriteriaViewModel;
 import jakarta.validation.Valid;
@@ -38,11 +39,15 @@ public class ConferenceController {
       return "conference-search-result";
 
     } else {
-      var foundConferences =
-          conferenceService.searchAvailableConferences(criteriaViewModel.getStartTime(), criteriaViewModel.getEndTime());
-      model.addAttribute("conferences", foundConferences);
+      var foundConferenceDtos =
+          conferenceService.searchAvailableConferences(criteriaViewModel.getStartTime(),
+              criteriaViewModel.getEndTime());
+      var summaryConferencesModels = foundConferenceDtos.stream()
+          .map(ConferenceSummaryMapper::toViewModel)
+          .toList();
+
+      model.addAttribute("conferences", summaryConferencesModels);
       return "conference-search-result";
     }
   }
-
 }

@@ -1,6 +1,6 @@
 package com.conference.platform.backoffice.ui.service;
 
-import com.conference.platform.backoffice.ui.httpclient.BackOfficeGatewayHttpClient;
+import com.conference.platform.backoffice.ui.httpclient.ConferenceHttpClient;
 import com.conference.platform.backoffice.ui.httpclient.dto.ConferenceResponseDto;
 import com.conference.platform.backoffice.ui.httpclient.dto.CreateConferenceRequestDto;
 import com.conference.platform.backoffice.ui.httpclient.dto.UpdateConferenceRequestDto;
@@ -11,26 +11,25 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ConferenceServiceImpl implements ConferenceService {
 
-  private final BackOfficeGatewayHttpClient backOfficeGatewayHttpClient;
+  private final ConferenceHttpClient conferenceHttpClient;
 
   @Override
   public ConferenceResponseDto getConference(String conferenceCode) {
-    return backOfficeGatewayHttpClient.getConference(conferenceCode);
+    return conferenceHttpClient.getConference(conferenceCode);
   }
 
   @Override
   public ConferenceResponseDto cancelConference(String conferenceCode) {
-
-    return backOfficeGatewayHttpClient.cancelConference(conferenceCode);
+    return conferenceHttpClient.cancelConference(conferenceCode);
   }
 
   @Override
   public ConferenceResponseDto createConference(CreateConferenceRequestDto requestDto) {
-    return backOfficeGatewayHttpClient.createConference(requestDto);
+    return conferenceHttpClient.createConference(requestDto);
   }
 
   @Override
   public ConferenceResponseDto updateConference(UpdateConferenceRequestDto requestDto, String conferenceCode) {
-    return backOfficeGatewayHttpClient.updateConference(requestDto, conferenceCode);
+    return conferenceHttpClient.updateConference(requestDto, conferenceCode);
   }
 }

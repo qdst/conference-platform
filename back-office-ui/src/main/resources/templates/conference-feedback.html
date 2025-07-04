@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Feedback for Conference [[${conferenceCode}]]</title>
+</head>
+<body>
+<h1>Feedback for Conference <span th:text="${conferenceCode}">CODE</span></h1>
+
+<div th:if="${feedbacks == null or #lists.isEmpty(feedbacks)}">
+  <p>No feedback has been submitted yet.</p>
+</div>
+
+<div th:if="${feedbacks != null and !#lists.isEmpty(feedbacks)}">
+  <ul th:style="'list-style: none; padding: 0;'">
+    <li th:each="feedback : ${feedbacks}" th:style="'margin-bottom: 2em;'">
+      <fieldset th:style="'width: 60ch; padding: 1em; border: 1px solid #ccc;'">
+
+        <strong>Title:</strong><br/>
+        <input type="text"
+               th:value="${feedback.title}"
+               disabled
+               th:style="'width: 40ch; border: none; background: transparent;'"/>
+        <br/><br/>
+
+          <strong>Text:</strong><br/>
+          <textarea disabled
+                    th:text="${feedback.text}"
+                    th:style="'width: 100ch; height: 6em; border: none; background: transparent;'"></textarea>
+        <br/>
+
+        <div th:style="'display: flex; gap: 2ch; align-items: center;'">
+          <div th:style="'display: inline-block;'">
+            <strong>Author:</strong>
+            <input type="text"
+                   th:value="${feedback.author}"
+                   disabled
+                   th:style="'width: 20ch; border: none; background: transparent; margin-left: 0.5ch;'"/>
+          </div>
+          <div th:style="'display: inline-block;'">
+            <strong>Submitted At:</strong>
+            <input type="text"
+                   th:value="${#temporals.format(feedback.createdAt, 'dd-MM-yyyy HH:mm')}"
+                   disabled
+                   th:style="'width: 20ch; border: none; background: transparent; margin-left: 0.5ch;'"/>
+          </div>
+        </div>
+      </fieldset>
+    </li>
+  </ul>
+</div>
+</body>
+</html>

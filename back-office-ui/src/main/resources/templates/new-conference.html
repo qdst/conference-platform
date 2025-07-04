@@ -38,15 +38,5 @@
   <button type="submit">Submit</button>
 </form>
 
-<div th:if="${createdConference}">
-  <h2>Conference Created</h2>
-  <p>Code: <span th:text="${createdConference.code}"></span></p>
-  <p>Title: <span th:text="${createdConference.title}"></span></p>
-  <p>Start Time: <span th:text="${#temporals.format(createdConference.startTime, 'yyyy-MM-dd HH:mm')}"></span></p>
-  <p>End Time: <span th:text="${#temporals.format(createdConference.endTime, 'yyyy-MM-dd HH:mm')}"></span></p>
-  <p>Room Code: <span th:text="${createdConference.roomCode}"></span></p>
-  <p>Total Capacity: <span th:text="${createdConference.totalCapacity}"></span></p>
-  <p>Status: <span th:text="${createdConference.status}"></span></p>
-</div>
 </body>
 </html>

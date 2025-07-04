@@ -17,4 +17,10 @@ public class ConferenceServiceImpl implements ConferenceService {
   public List<ConferenceSummaryResponseDto> searchAvailableConferences(LocalDateTime sartTime, LocalDateTime endTime) {
     return gatewayHttpClient.searchAvailableConferences(sartTime, endTime);
   }
+
+  @Override
+  public ConferenceSummaryResponseDto getConferenceSummary(String conferenceCode) {
+    return gatewayHttpClient.getConferenceSummary(conferenceCode);
+  }
+
 }
