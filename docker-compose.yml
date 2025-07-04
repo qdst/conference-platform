@@ -6,13 +6,19 @@ services:
       - conference-room
       - conference-control
       - conference-feedback
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
     expose:
       - "12001"
+    ports:
+      - "12001:12001"
 
   back-office-ui:
     image: back-office-ui:latest
     ports:
       - "8888:8888"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
     depends_on:
       - back-office-gateway
 
@@ -46,8 +52,13 @@ services:
       - conference-control
       - conference-room
       - conference-feedback
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
     expose:
       - "12002"
+    ports:
+      - "12002:12002"
+
 
   conference-room:
     image: conference-room:latest
@@ -63,6 +74,8 @@ services:
 
   external-ui:
     image: external-ui:latest
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
     ports:
       - "9999:9999"
     depends_on:
