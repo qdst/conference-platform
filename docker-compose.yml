@@ -1,16 +1,90 @@
 services:
+
+  back-office-gateway:
+    image: back-office-gateway:latest
+    depends_on:
+      - conference-room
+      - conference-control
+      - conference-feedback
+    expose:
+      - "12001"
+
+  back-office-ui:
+    image: back-office-ui:latest
+    ports:
+      - "8888:8888"
+    depends_on:
+      - back-office-gateway
+
+  conference-control:
+    image: conference-control:latest
+    depends_on:
+      - conference-room
+      - db
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    expose:
+      - "11002"
+    ports:
+      - "11002:11002"
+
+  conference-feedback:
+    image: conference-feedback:latest
+    depends_on:
+      - conference-control
+      - db
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    expose:
+      - "11003"
+    ports:
+      - "11003:11003"
+
+  conference-gateway:
+    image: conference-gateway:latest
+    depends_on:
+      - conference-control
+      - conference-room
+      - conference-feedback
+    expose:
+      - "12002"
+
+  conference-room:
+    image: conference-room:latest
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+#      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:11234/conference_platform_db
+    depends_on:
+      - db
+    expose:
+      - "11001"
+    ports:
+      - "11001:11001"
+
+  external-ui:
+    image: external-ui:latest
+    ports:
+      - "9999:9999"
+    depends_on:
+      - conference-gateway
+
+
   db:
     image: postgres:17.5
     container_name: conference-platform-db
+    command: ["postgres", "-c", "port=11234"]
     environment:
       POSTGRES_USER: conference_platform_db_user
       POSTGRES_PASSWORD: changeme
       POSTGRES_DB: conference_platform_db
+      POSTGRES_PORT: 11234
     volumes:
       - db_data:/var/lib/postgresql/data
       - ./db-init:/docker-entrypoint-initdb.d:ro
+    expose:
+      - "11234"
     ports:
-      - "11234:5432"
+      - "11234:11234"
 
 volumes:
   db_data:
