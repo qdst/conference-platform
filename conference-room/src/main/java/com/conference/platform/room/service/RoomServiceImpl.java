@@ -55,7 +55,7 @@ public class RoomServiceImpl implements RoomService {
   }
 
   private void hasSufficientCapacityForConferences(String roomCode, Integer newCapacity) {
-    var responseDto = conferenceControlHttpClient.conferenceWillExceedCapacity(roomCode, newCapacity);
+    var responseDto = conferenceControlHttpClient.willCapacityBeExceeded(roomCode, newCapacity);
     if (responseDto.getReservationExceedsNewCapacity()) {
       throw new RoomException("You cannot lower the capacity of room '%s', its capacity already has been reserved.".formatted(roomCode));
     }

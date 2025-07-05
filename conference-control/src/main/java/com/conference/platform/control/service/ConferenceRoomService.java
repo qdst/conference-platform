@@ -5,5 +5,5 @@ import com.conference.platform.control.dto.controller.RoomOccupationResponseDto;
 
 public interface ConferenceRoomService {
   RoomOccupationResponseDto roomHasUpcomingConference(String roomCode);
-  CapacityCheckResponseDto conferenceWillExceedCapacity(String roomCode, Integer newCapacity);
+  CapacityCheckResponseDto willCapacityBeExceeded(String roomCode, Integer newCapacity);
 }

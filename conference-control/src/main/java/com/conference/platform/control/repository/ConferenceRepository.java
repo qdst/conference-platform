@@ -67,7 +67,7 @@ public interface ConferenceRepository extends JpaRepository<Conference, Long> {
              AND c.startTime >= :currentTime
              AND c.activeParticipantsCount > :newRoomCapacity)
       """)
-  boolean conferenceWillExceedCapacity(
+  boolean willCapacityBeExceeded(
       @Param("roomCode") String roomCode,
       @Param("currentTime") LocalDateTime currentTime,
       @Param("newRoomCapacity") Integer newRoomCapacity);

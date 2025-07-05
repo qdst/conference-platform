@@ -28,7 +28,7 @@ public class ConferenceControlHttpClientImpl implements ConferenceControlHttpCli
   }
 
   @Override
-  public CapacityCheckResponseDto conferenceWillExceedCapacity(String roomCode, Integer newCapacity) {
+  public CapacityCheckResponseDto willCapacityBeExceeded(String roomCode, Integer newCapacity) {
     return restTemplate.getForObject(checkRoomNewCapacityPath, CapacityCheckResponseDto.class, roomCode, newCapacity);
   }
 

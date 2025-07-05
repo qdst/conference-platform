@@ -25,8 +25,8 @@ public class ConferenceRoomInternalController {
   }
 
   @GetMapping("/{roomCode}/new-capacity-check")
-  public CapacityCheckResponseDto cancelConference(@PathVariable String roomCode, @RequestParam(required = true) Integer newCapacity) {
-    return conferenceRoomService.conferenceWillExceedCapacity(roomCode, newCapacity);
+  public CapacityCheckResponseDto willCapacityBeExceeded(@PathVariable String roomCode, @RequestParam(required = true) Integer newCapacity) {
+    return conferenceRoomService.willCapacityBeExceeded(roomCode, newCapacity);
   }
 
 }

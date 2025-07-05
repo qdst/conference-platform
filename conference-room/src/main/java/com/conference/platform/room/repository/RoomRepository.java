@@ -11,6 +11,5 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
   default Room getByRoomCode(String roomCode) {
     return findByRoomCode(roomCode).orElseThrow();
   }
-
   Optional<Room> findByRoomCode(String roomCode);
 }

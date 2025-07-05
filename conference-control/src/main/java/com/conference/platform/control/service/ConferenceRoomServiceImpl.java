@@ -25,10 +25,10 @@ public class ConferenceRoomServiceImpl implements ConferenceRoomService {
   }
 
   @Override
-  public CapacityCheckResponseDto conferenceWillExceedCapacity(String roomCode, Integer newCapacity) {
+  public CapacityCheckResponseDto willCapacityBeExceeded(String roomCode, Integer newCapacity) {
     var currentDateTime = dateTimeService.getCurrentDateTime();
 
-    var isOccupied = conferenceRepository.conferenceWillExceedCapacity(roomCode, currentDateTime, newCapacity);
+    var isOccupied = conferenceRepository.willCapacityBeExceeded(roomCode, currentDateTime, newCapacity);
 
     return CapacityCheckResponseDto.builder()
         .reservationExceedsNewCapacity(isOccupied)
