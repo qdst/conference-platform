@@ -29,8 +29,17 @@ public class RoomMapper {
   }
 
   public static void updateRoom(Room room, UpdateRoomRequestDto requestDto) {
-    room.setName(requestDto.getName());
-    room.setRoomStatus(requestDto.getRoomStatus());
-    room.setCapacity(requestDto.getCapacity());
+    var roomNewName = requestDto.getName();
+    if(roomNewName != null && !(room.getName().equals(roomNewName))) {
+      room.setName(roomNewName);
+    }
+    var roomNewStatus = requestDto.getRoomStatus();
+    if(roomNewStatus != null && !(room.getRoomStatus().equals(roomNewStatus))) {
+      room.setRoomStatus(roomNewStatus);
+    }
+    var roomNewCapacity = requestDto.getCapacity();
+    if(roomNewCapacity != null && !(room.getCapacity().equals(roomNewCapacity))) {
+      room.setCapacity(requestDto.getCapacity());
+    }
   }
 }

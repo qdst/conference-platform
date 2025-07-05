@@ -34,12 +34,18 @@ public class RoomServiceImpl implements RoomService {
   @Override
   public RoomResponseDto updateRoom(UpdateRoomRequestDto updateRoomRequestDto, String roomCode) {
 
-    if (updateRoomRequestDto.getRoomStatus() != RoomStatus.AVAILABLE) {
+    var roomForUpdate = roomRepository.getByRoomCode(roomCode);
+
+    var roomNewStatus = updateRoomRequestDto.getRoomStatus();
+    var roomOldStatus = roomForUpdate.getRoomStatus();
+    if (roomNewStatus != roomOldStatus && roomNewStatus != RoomStatus.AVAILABLE) {
       verifyRoomReservation(roomCode);
     }
-    var roomForUpdate = roomRepository.findByRoomCode(roomCode).orElseThrow();
+
     var newCapacity = updateRoomRequestDto.getCapacity();
-    if (newCapacity < roomForUpdate.getCapacity()) {
+    var oldCapacity = roomForUpdate.getCapacity();
+
+    if (newCapacity != null && !(oldCapacity.equals(newCapacity)) && oldCapacity > newCapacity) {
       hasSufficientCapacityForConferences(roomCode, newCapacity);
     }
 
@@ -60,14 +66,14 @@ public class RoomServiceImpl implements RoomService {
     if (responseDto.getHasConferenceInTheFuture()) {
       throw new RoomException(
           ("Room '%s' has upcoming conferences. To change its status to anything other than AVAILABLE."
-           + "Please cancel all future conferences first.").formatted(roomCode));
+           + ", please cancel all future conferences first.").formatted(roomCode));
     }
   }
 
   @Override
   public RoomResponseDto findByRoomCode(String roomCode) {
-    return roomRepository.findByRoomCode(roomCode)
-        .map(RoomMapper::toResponseDto).orElseThrow();
+    var room = roomRepository.getByRoomCode(roomCode);
+    return RoomMapper.toResponseDto(room);
   }
 
   @Override

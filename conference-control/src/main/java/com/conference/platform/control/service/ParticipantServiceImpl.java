@@ -2,6 +2,8 @@ package com.conference.platform.control.service;
 
 import com.conference.platform.control.dto.controller.ParticipantRegistrationRequestDto;
 import com.conference.platform.control.dto.controller.ParticipantResponseDto;
+import com.conference.platform.control.error.ConferenceConflictStateException;
+import com.conference.platform.control.error.ParticipantConflictStateException;
 import com.conference.platform.control.mapper.ParticipantMapper;
 import com.conference.platform.control.model.ConferenceStatus;
 import com.conference.platform.control.model.ParticipantStatus;
@@ -27,10 +29,11 @@ public class ParticipantServiceImpl implements ParticipantService {
       String conferenceCode,
       ParticipantRegistrationRequestDto requestDto) {
     var conference = conferenceRepository.getByConferenceCode(conferenceCode);
-    //TODO: Move validation into conference service, remove duplication
 
     if (conference.getStatus() != ConferenceStatus.SCHEDULED) {
-      throw null;
+      throw new ConferenceConflictStateException(
+          "The conference must have the status 'SCHEDULED' to register a new participant. Current conference status: '%s'"
+              .formatted(conference.getStatus()));
     }
     var maxCapacity = conference.getTotalCapacity();
     var activeRegistrations =
@@ -40,8 +43,9 @@ public class ParticipantServiceImpl implements ParticipantService {
       return createConferenceNewParticipant(conferenceCode, requestDto, conference);
 
     } else {
-      throw null;
-    }
+      throw new ConferenceConflictStateException(
+          "The conference has no more capacity for a new participant. Max capacity for the conference: '%s'"
+              .formatted(conference.getTotalCapacity()));    }
   }
 
   private ParticipantResponseDto createConferenceNewParticipant(String conferenceCode,
@@ -62,7 +66,9 @@ public class ParticipantServiceImpl implements ParticipantService {
   public ParticipantResponseDto cancelRegistration(String registrationCode) {
     var participant = participantRepository.getByRegistrationCode(registrationCode);
     if (participant.getStatus() != ParticipantStatus.REGISTERED) {
-      throw null;
+      throw new ParticipantConflictStateException(
+          "The participant must have the status REGISTERED before it can be cancelled. Current status: ‘%s’"
+              .formatted(participant.getStatus()));
     }
     participant.setStatus(ParticipantStatus.CANCELLED);
     var canceledParticipant = participantRepository.save(participant);

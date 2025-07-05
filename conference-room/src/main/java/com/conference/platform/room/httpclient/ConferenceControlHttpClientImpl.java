@@ -9,24 +9,27 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class ConferenceControlHttpClientImpl implements ConferenceControlHttpClient {
 
-  private final String participantPath;
+  private final String checkRoomUpcomingReservation;
+  private final String checkRoomNewCapacityPath;
   private final RestTemplate restTemplate;
 
   public ConferenceControlHttpClientImpl(
-      @Value("${conference.control.rest.client.paths.participant.find}") String participantPath,
+      @Value("${conference.control.rest.client.paths.conferences.rooms.new-capacity}") String checkRoomNewCapacityPath,
+      @Value("${conference.control.rest.client.paths.conferences.rooms.reservation}") String checkRoomUpcomingReservation,
       RestTemplate restTemplate) {
     this.restTemplate = restTemplate;
-    this.participantPath = participantPath;
+    this.checkRoomNewCapacityPath = checkRoomNewCapacityPath;
+    this.checkRoomUpcomingReservation = checkRoomUpcomingReservation;
   }
 
   @Override
   public RoomOccupationResponseDto roomHasUpcomingConference(String roomCode) {
-    return null;
+    return restTemplate.getForObject(checkRoomUpcomingReservation,  RoomOccupationResponseDto.class, roomCode);
   }
 
   @Override
   public CapacityCheckResponseDto conferenceWillExceedCapacity(String roomCode, Integer newCapacity) {
-    return null;
+    return restTemplate.getForObject(checkRoomNewCapacityPath, CapacityCheckResponseDto.class, roomCode, newCapacity);
   }
 
 }

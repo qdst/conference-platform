@@ -1,8 +1,6 @@
 package com.conference.platform.control.service;
 
-import com.conference.platform.control.dto.controller.CapacityCheckRequestDto;
 import com.conference.platform.control.dto.controller.CapacityCheckResponseDto;
-import com.conference.platform.control.dto.controller.RoomOccupationRequestDto;
 import com.conference.platform.control.dto.controller.RoomOccupationResponseDto;
 import com.conference.platform.control.repository.ConferenceRepository;
 import lombok.RequiredArgsConstructor;

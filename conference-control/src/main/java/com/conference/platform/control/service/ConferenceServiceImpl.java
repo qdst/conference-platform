@@ -1,13 +1,14 @@
 package com.conference.platform.control.service;
 
 import com.conference.platform.control.dto.controller.ConferenceAvailabilityResponseDto;
+import com.conference.platform.control.dto.controller.ConferenceResponseDto;
 import com.conference.platform.control.dto.controller.ConferenceSummaryResponseDto;
 import com.conference.platform.control.dto.controller.CreateConferenceRequestDto;
-import com.conference.platform.control.dto.controller.ConferenceResponseDto;
 import com.conference.platform.control.dto.controller.UpdateConferenceRequestDto;
 import com.conference.platform.control.dto.httpclient.RoomResponseDto;
-import com.conference.platform.control.error.ConferenceException;
-import com.conference.platform.control.error.InvalidConferenceInputException;
+import com.conference.platform.control.error.ConferenceConflictStateException;
+import com.conference.platform.control.error.ConferenceInvalidInputException;
+import com.conference.platform.control.error.RoomConflictStateException;
 import com.conference.platform.control.mapper.ConferenceMapper;
 import com.conference.platform.control.model.ConferenceStatus;
 import com.conference.platform.control.model.RoomStatus;
@@ -69,7 +70,7 @@ public class ConferenceServiceImpl implements ConferenceService {
 
   private static void verifyCorrectInputStartTimeAndEndTime(LocalDateTime startTime, LocalDateTime endTime) {
     if (startTime.isAfter(endTime) || startTime.isEqual(endTime)) {
-      throw new InvalidConferenceInputException("Conference start time must be after end time.");
+      throw new ConferenceInvalidInputException("Conference start time must be after end time.");
     }
   }
 
@@ -82,11 +83,11 @@ public class ConferenceServiceImpl implements ConferenceService {
         conferenceRepository.existsOverlapping(roomDto.getRoomCode(), startTime, endTime, conferenceCode);
 
     if (hasOverlappingConferences) {
-      throw new ConferenceException("The room has overlapping conferences. Room code: " + roomDto.getRoomCode());
+      throw new RoomConflictStateException("The room has overlapping conferences. Room code: " + roomDto.getRoomCode());
     }
 
     if (roomDto.getRoomStatus() != RoomStatus.AVAILABLE) {
-      throw new ConferenceException("The room has status other than AVAILABLE. Room status: " + roomDto.getRoomCode());
+      throw new RoomConflictStateException("The room has status other than AVAILABLE. Room status: " + roomDto.getRoomCode());
     }
   }
 
@@ -95,7 +96,7 @@ public class ConferenceServiceImpl implements ConferenceService {
     var conference = conferenceRepository.getByConferenceCode(conferenceCode);
 
     if(conference.getStatus() != ConferenceStatus.SCHEDULED) {
-      throw new ConferenceException(
+      throw new ConferenceConflictStateException(
           "Conference can be canceled only in the status SCHEDULED. The current conference status: "
           + conference.getStatus());
     }
@@ -112,9 +113,9 @@ public class ConferenceServiceImpl implements ConferenceService {
     var currentTime = dateTimeService.getCurrentDateTime();
 
     if (currentTime.isAfter(startTime) && currentTime.isBefore(endTime)) {
-      throw new ConferenceException("The conference cannot be '%s' during the progress".formatted(action));
+      throw new ConferenceConflictStateException("The conference cannot be '%s' during the progress".formatted(action));
     } else if (currentTime.isAfter(startTime) && currentTime.isAfter(endTime)) {
-      throw new ConferenceException("The conference cannot be '%s' when it's completed".formatted(action));
+      throw new ConferenceConflictStateException("The conference cannot be '%s' when it's completed".formatted(action));
     }
   }
 
@@ -122,7 +123,7 @@ public class ConferenceServiceImpl implements ConferenceService {
   public ConferenceResponseDto updateConference(String conferenceCode, UpdateConferenceRequestDto requestDto) {
     var conference = conferenceRepository.getByConferenceCode(conferenceCode);
     if (conference.getStatus() != ConferenceStatus.SCHEDULED) {
-      throw new ConferenceException(
+      throw new ConferenceConflictStateException(
           "Conference can be updated only in the status SCHEDULED. The current conference status: "
           + conference.getStatus());
     }
@@ -151,7 +152,7 @@ public class ConferenceServiceImpl implements ConferenceService {
 
   private void validateRoomCapacity(int maxCapacity, int activeRegistrations) {
     if(Utils.hasNoCapacity(maxCapacity, activeRegistrations)) {
-      throw new ConferenceException("Room has no capacity.");
+      throw new RoomConflictStateException("Room has no capacity during this period.");
     }
   }
 
@@ -159,10 +160,10 @@ public class ConferenceServiceImpl implements ConferenceService {
   @Transactional(readOnly = true)
   public ConferenceAvailabilityResponseDto checkAvailability(String conferenceCode) {
     var conference = conferenceRepository.getByConferenceCode(conferenceCode);
-    if(conference.getStatus() != ConferenceStatus.SCHEDULED) {
-      throw new  ConferenceException("The conference must be in status SCHEDULED. The current conference status: " + conference.getStatus());
-    }
 
+    if(conference.getStatus() != ConferenceStatus.SCHEDULED) {
+      throw new ConferenceConflictStateException("The conference must be in status SCHEDULED. The current conference status: " + conference.getStatus());
+    }
     var activeRegistrations = participantRepository.countAllActiveConferenceParticipant(conferenceCode);
     var maxCapacity = conference.getTotalCapacity();
 

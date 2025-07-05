@@ -1,5 +1,6 @@
 package com.conference.platform.control.repository;
 
+import com.conference.platform.control.error.ParticipantNotFoundException;
 import com.conference.platform.control.model.entity.Participant;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,7 +14,8 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
 
 
   default Participant getByRegistrationCode(String registrationCode) {
-    return findByRegistrationCode(registrationCode).orElseThrow(null);
+    return findByRegistrationCode(registrationCode)
+        .orElseThrow(() -> new ParticipantNotFoundException(registrationCode));
   }
 
   Optional<Participant> findByRegistrationCode(String registrationCode);
