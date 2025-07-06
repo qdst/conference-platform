@@ -16,6 +16,4 @@ public class DateTimeServiceImpl implements DateTimeService {
     return LocalDateTime.now(clock);
   }
 
-
-
 }

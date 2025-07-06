@@ -5,6 +5,7 @@
   xsi:schemaLocation="
   http://www.liquibase.org/xml/ns/dbchangelog
   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
   <changeSet id="create_conference_table" author="igor">
     <createSequence sequenceName="conference_t_id_seq" startValue="100" incrementBy="1"/>
 

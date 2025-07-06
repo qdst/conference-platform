@@ -22,8 +22,4 @@ public class IdentificationCodeServiceImpl implements IdentificationCodeService 
     return conferenceCode + "-" + participantNumberString;
   }
 
-  private static int getNumberLength(int newParticipantNumber) {
-    return String.valueOf(newParticipantNumber).length();
-  }
-
 }

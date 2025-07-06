@@ -9,6 +9,7 @@ import com.conference.platform.control.dto.httpclient.RoomResponseDto;
 import com.conference.platform.control.error.ConferenceConflictStateException;
 import com.conference.platform.control.error.ConferenceInvalidInputException;
 import com.conference.platform.control.error.RoomConflictStateException;
+import com.conference.platform.control.httpclient.RoomHttpClient;
 import com.conference.platform.control.mapper.ConferenceMapper;
 import com.conference.platform.control.model.ConferenceStatus;
 import com.conference.platform.control.model.RoomStatus;
@@ -27,8 +28,11 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ConferenceServiceImpl implements ConferenceService {
 
+  private final static String OPERATION_CANCELLED = "CANCELLED";
+  private final static String OPERATION_UPDATED = "UPDATED";
+
   private final ConferenceRepository conferenceRepository;
-  private final RoomService roomService;
+  private final RoomHttpClient roomHttpClient;
   private final ParticipantRepository participantRepository;
   private final IdentificationCodeService identificationCodeService;
   private final DateTimeService dateTimeService;
@@ -40,11 +44,11 @@ public class ConferenceServiceImpl implements ConferenceService {
     return ConferenceMapper.toResponseDto(conference);
   }
 
-  @Transactional(readOnly = true)
   @Override
+  @Transactional(readOnly = true)
   public ConferenceSummaryResponseDto getConferenceSummary(String conferenceCode) {
     var conference = conferenceRepository.getByConferenceCode(conferenceCode);
-    var room = roomService.findByRoomCode(conference.getRoomCode());
+    var room = roomHttpClient.findByRoomCode(conference.getRoomCode());
     return ConferenceMapper.toSummaryResponseDto(conference, room.getLocationDto());
   }
 
@@ -54,7 +58,7 @@ public class ConferenceServiceImpl implements ConferenceService {
     var startTime = requestDto.getStartTime();
     var endTime = requestDto.getEndTime();
 
-    var roomDto = roomService.findByRoomCode(roomCode);
+    var roomDto = roomHttpClient.findByRoomCode(roomCode);
 
     verifyCorrectInputStartTimeAndEndTime(startTime, endTime);
     verifyRoomAvailability(roomDto, startTime, endTime);
@@ -78,29 +82,33 @@ public class ConferenceServiceImpl implements ConferenceService {
     verifyRoomAvailability(roomDto, startTime, endTime, null);
   }
 
-  private void verifyRoomAvailability(RoomResponseDto roomDto, LocalDateTime startTime, LocalDateTime endTime, String conferenceCode) {
+  private void verifyRoomAvailability(RoomResponseDto roomDto, LocalDateTime conferenceNewStartTime, LocalDateTime conferenceNewEndTime,
+      String conferenceCode) {
+
+    if (roomDto.getRoomStatus() != RoomStatus.AVAILABLE) {
+      throw new RoomConflictStateException(
+          "The room has status other than AVAILABLE. Room status: " + roomDto.getRoomCode());
+    }
+
     var hasOverlappingConferences =
-        conferenceRepository.existsOverlapping(roomDto.getRoomCode(), startTime, endTime, conferenceCode);
+        conferenceRepository.existsOverlapping(roomDto.getRoomCode(), conferenceNewStartTime, conferenceNewEndTime, conferenceCode);
 
     if (hasOverlappingConferences) {
       throw new RoomConflictStateException("The room has overlapping conferences. Room code: " + roomDto.getRoomCode());
     }
 
-    if (roomDto.getRoomStatus() != RoomStatus.AVAILABLE) {
-      throw new RoomConflictStateException("The room has status other than AVAILABLE. Room status: " + roomDto.getRoomCode());
-    }
   }
 
   @Override
   public ConferenceResponseDto cancelConference(String conferenceCode) {
     var conference = conferenceRepository.getByConferenceCode(conferenceCode);
 
-    if(conference.getStatus() != ConferenceStatus.SCHEDULED) {
+    if (conference.getStatus() != ConferenceStatus.SCHEDULED) {
       throw new ConferenceConflictStateException(
           "Conference can be canceled only in the status SCHEDULED. The current conference status: "
           + conference.getStatus());
     }
-    verifyConferenceHasCorrectStartAndEndTime(conference.getStartTime(), conference.getEndTime(), "CANCELLED");
+    verifyConferenceHasCorrectStartAndEndTime(conference.getStartTime(), conference.getEndTime(), OPERATION_CANCELLED);
 
     conference.setStatus(ConferenceStatus.CANCELLED);
 
@@ -109,7 +117,8 @@ public class ConferenceServiceImpl implements ConferenceService {
     return ConferenceMapper.toResponseDto(canceledConference);
   }
 
-  private void verifyConferenceHasCorrectStartAndEndTime(LocalDateTime startTime, LocalDateTime endTime, String action) {
+  private void verifyConferenceHasCorrectStartAndEndTime(LocalDateTime startTime, LocalDateTime endTime,
+      String action) {
     var currentTime = dateTimeService.getCurrentDateTime();
 
     if (currentTime.isAfter(startTime) && currentTime.isBefore(endTime)) {
@@ -127,32 +136,45 @@ public class ConferenceServiceImpl implements ConferenceService {
           "Conference can be updated only in the status SCHEDULED. The current conference status: "
           + conference.getStatus());
     }
-    verifyConferenceHasCorrectStartAndEndTime(conference.getStartTime(), conference.getEndTime(), "UPDATED");
+    verifyConferenceHasCorrectStartAndEndTime(conference.getStartTime(), conference.getEndTime(), OPERATION_UPDATED);
+    var conferenceNewStartTime = requestDto.getStartTime();
+    var conferenceNewEndTime = requestDto.getEndTime();
 
-    var startTimeForUpdate = requestDto.getStartTime();
-    var endTimeForUpdate = requestDto.getEndTime();
-    var roomCodeForUpdate = requestDto.getRoomCode();
+    verifyCorrectInputStartTimeAndEndTime(conferenceNewStartTime, conferenceNewEndTime);
 
-    verifyCorrectInputStartTimeAndEndTime(startTimeForUpdate, endTimeForUpdate);
+    var newRoomCode = requestDto.getRoomCode();
 
-    var roomDto = roomService.findByRoomCode(roomCodeForUpdate);
-    verifyRoomAvailability(roomDto, startTimeForUpdate, endTimeForUpdate,  conferenceCode);
+    if (!newRoomCode.equals(conference.getRoomCode())) {
 
-    var maxCapacity = roomDto.getCapacity();
-    var activeRegistrations = participantRepository.countAllActiveConferenceParticipant(conferenceCode);
-    validateRoomCapacity(maxCapacity, activeRegistrations);
+      var newRoomDto = roomHttpClient.findByRoomCode(newRoomCode);
+      verifyConferenceRoomCanBeChanged(conferenceCode, conferenceNewStartTime, conferenceNewEndTime, newRoomDto);
+      conference.setRoomCode(newRoomCode);
+      conference.setTotalCapacity(newRoomDto.getCapacity());
+    }
 
-    conference.setStartTime(startTimeForUpdate);
-    conference.setEndTime(endTimeForUpdate);
-    conference.setRoomCode(roomCodeForUpdate);
+    conference.setStartTime(conferenceNewStartTime);
+    conference.setEndTime(conferenceNewEndTime);
+
     var updatedConference = conferenceRepository.save(conference);
 
     return ConferenceMapper.toResponseDto(updatedConference);
   }
 
-  private void validateRoomCapacity(int maxCapacity, int activeRegistrations) {
-    if(Utils.hasNoCapacity(maxCapacity, activeRegistrations)) {
-      throw new RoomConflictStateException("Room has no capacity during this period.");
+  private void verifyConferenceRoomCanBeChanged(
+      String conferenceCode,
+      LocalDateTime conferenceNewStartTime,
+      LocalDateTime conferenceNewEndTime,
+      RoomResponseDto roomDto) {
+    verifyRoomAvailability(roomDto, conferenceNewStartTime, conferenceNewEndTime, conferenceCode);
+
+    var maxCapacity = roomDto.getCapacity();
+    var activeParticipantRegistrations = participantRepository.countAllActiveConferenceParticipant(conferenceCode);
+    validateRoomCapacity(maxCapacity, activeParticipantRegistrations);
+  }
+
+  private void validateRoomCapacity(int maxCapacity, int activeParticipantRegistrations) {
+    if (Utils.hasNoCapacity(maxCapacity, activeParticipantRegistrations)) {
+      throw new RoomConflictStateException("Room won't have enough capacity during this period.");
     }
   }
 
@@ -161,8 +183,9 @@ public class ConferenceServiceImpl implements ConferenceService {
   public ConferenceAvailabilityResponseDto checkAvailability(String conferenceCode) {
     var conference = conferenceRepository.getByConferenceCode(conferenceCode);
 
-    if(conference.getStatus() != ConferenceStatus.SCHEDULED) {
-      throw new ConferenceConflictStateException("The conference must be in status SCHEDULED. The current conference status: " + conference.getStatus());
+    if (conference.getStatus() != ConferenceStatus.SCHEDULED) {
+      throw new ConferenceConflictStateException(
+          "The conference must be in status SCHEDULED. The current conference status: " + conference.getStatus());
     }
     var activeRegistrations = participantRepository.countAllActiveConferenceParticipant(conferenceCode);
     var maxCapacity = conference.getTotalCapacity();
@@ -187,7 +210,7 @@ public class ConferenceServiceImpl implements ConferenceService {
   }
 
   private ConferenceSummaryResponseDto createSummaryResponseDto(Conference conference) {
-    var room = roomService.findByRoomCode(conference.getRoomCode());
+    var room = roomHttpClient.findByRoomCode(conference.getRoomCode());
     return ConferenceMapper.toSummaryResponseDto(conference, room.getLocationDto());
   }
 
