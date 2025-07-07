@@ -17,8 +17,6 @@ public class ParticipantExternalController {
 
   @PostMapping("/{registrationCode}/cancel")
   public ParticipantResponseDto cancelRegistration(@PathVariable String registrationCode) {
-    var rest = participantService.cancelRegistration(registrationCode);
-    System.out.println("XXX: " + rest);
-    return rest;
+    return participantService.cancelRegistration(registrationCode);
   }
 }
